@@ -103,6 +103,12 @@ button:focus-visible {
   gap: 10px;
 }
 
+.level-label {
+  margin-right: auto;
+  color: var(--mut);
+  font-weight: 700;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -169,10 +175,129 @@ kbd {
   isolation: isolate;
 }
 
+.workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  height: 100%;
+  min-height: 0;
+}
+
+.workspace-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+}
+
+.workspace-pane + .workspace-pane {
+  border-left: 1px solid var(--bd);
+}
+
+.workspace-pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  height: 46px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--bd);
+}
+
+.workspace-pane-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.blocks-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .editor {
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+
+.tasks-pane {
+  overflow: auto;
+  background: var(--surface-2);
+}
+
+.task-progress {
+  color: var(--mut);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.task-list {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+}
+
+.task-item {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+}
+
+.task-item.completed {
+  background: color-mix(in srgb, var(--good) 8%, var(--surface));
+  border-color: var(--good);
+}
+
+.task-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.task-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.task-item.completed h3 {
+  text-decoration: line-through;
+}
+
+.task-status {
+  flex: none;
+  color: var(--good);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.task-item p {
+  margin: 8px 0 14px;
+  color: var(--mut);
+  font-size: 13px;
+}
+
+.expected-output {
+  display: grid;
+  gap: 6px;
+  color: var(--mut);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.expected-output code {
+  display: block;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+  background: var(--surface-2);
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  color: var(--tx);
+  font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace;
 }
 
 /* Pojavna konzola */
@@ -341,6 +466,30 @@ kbd {
   white-space: pre;
 }
 
+.preview-output {
+  align-self: stretch;
+  flex: 1;
+  min-height: 180px;
+  overflow: auto;
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+}
+
+.preview-panel {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview-panel.active {
+  display: flex;
+}
+
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -407,6 +556,17 @@ kbd {
 
   .side {
     min-height: 320px;
+  }
+
+  .workspace-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(420px, 1fr) minmax(320px, auto);
+    overflow: auto;
+  }
+
+  .workspace-pane + .workspace-pane {
+    border-top: 1px solid var(--bd);
+    border-left: 0;
   }
 
   kbd {
