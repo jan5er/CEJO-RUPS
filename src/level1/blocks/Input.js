@@ -30,7 +30,7 @@ export const inputLevel1JSON = {
 
 //Generator for heading element
 export const initGenInput = () => {
-    forBlock['input_level1'] = function (block, generator) {
+    forBlock['input_level1'] = (block, generator) => {
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
     

@@ -22,7 +22,7 @@ export const headingLevel1JSON = {
 //Generator for heading element
 export const initGenHeading = () => {
 
-    forBlock['heading_level1'] = function (block, generator) {
+    forBlock['heading_level1'] = (block, generator) => {
     const text = generator.valueToCode(block, 'TEXT', Order.NONE) || "''";
     const headingGenCode = generator.provideFunction_(
             'headingGenCode',

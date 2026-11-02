@@ -10,4 +10,5 @@ export const forBlock = Object.create(null);
 
 //Set generators for blocks
 initGenHeading();
+initGenInput();
 
