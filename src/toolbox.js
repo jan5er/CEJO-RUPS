@@ -53,6 +53,14 @@ export const TOOLBOX = {
             colour: "#ff8a3d",
             custom: "VARIABLE"
         },
+        {
+            kind: "category",
+            name: "Uporabnik",
+            colour: "#8957c5",
+            contents: [
+                { kind: "block", type: "ask_user" }
+            ]
+        },
 
     ],
 };

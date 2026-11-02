@@ -5,10 +5,17 @@ import * as Sl from "blockly/msg/sl";
 import { useEffect, useRef } from "react";
 import { WORKSPACE_OPTIONS, themeFor } from "../BlocklyTheme";
 
+import { blocks } from "../blocks.js";
+import { forBlock } from "../generator";
+import { load, save } from "../serialization";
+
+Blockly.common.defineBlocks(blocks);
+Object.assign(javascriptGenerator.forBlock, forBlock);
+
 Blockly.setLocale(Sl); // Nastavimo jezik blokov/teksta na slovenščino
 
 Blockly.Msg.MATH_CHANGE_TITLE = "povečaj %1 za %2"; // Slovenščina to prevede v "spremni" kar je neumno in neintuitivno
-Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2"; 
+Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2";
 
 /**
  * @param {object} props
@@ -41,8 +48,11 @@ export function BlockEditor({ toolbox, initialJson, onJsonChange, onCodeChange, 
             cb.current.onJsonChange?.(Blockly.serialization.workspaces.save(ws));
         };
 
+        load(ws); // namesto initialJson
+
         ws.addChangeListener((e) => {
             if (e.isUiEvent) return;
+            save(ws);
             emit();
         });
 
