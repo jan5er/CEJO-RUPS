@@ -6,7 +6,7 @@ export const containerLevel1JSON = {
   "type": "container_level1",
   "tooltip": "Vsebnik elemente centrira na strani in dodano novo vrstico",
   "helpUrl": "",
-  "message0": "Vsebnik  %1",
+  "message0": "Vsebnik %1",
   "args0": [
     {
       "type": "input_statement",

@@ -1,4 +1,4 @@
-//Treba narediti Heading, Input, simple text, combobox, container, image, button, card
+//Treba narediti Heading, Input, simple text, combobox, container, image, button
 
 import { Order } from 'blockly/javascript';
 import { forBlock } from './generator';

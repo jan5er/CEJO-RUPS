@@ -6,7 +6,7 @@ export const inputLevel1JSON = {
   "type": "input_level1",
   "tooltip": "Vnosno polje, ki shrani spremembe v spremenljivko",
   "helpUrl": "",
-  "message0": "Vnosno polje Oznaka: %1 Spremenljivka: %2 %3",
+  "message0": "Vnosno polje | Oznaka: %1 Spremenljivka: %2 %3",
   "args0": [
     {
       "type": "input_value",
@@ -53,7 +53,7 @@ export const initGenInput = () => {
                 inputEl.style.borderStyle = "solid";
                 containerDiv.appendChild(inputEl); 
                 
-                element.addEventListener("input", function(event) {
+                inputEl.addEventListener("input", function(event) {
                     varName = event.target.value;
                 });
         }`,
