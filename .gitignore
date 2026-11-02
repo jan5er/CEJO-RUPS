@@ -9,6 +9,12 @@
 !/src/assets/*.svg
 !/src/**/*.css
 !/src/**/*.jsx
+!/src/**/*.js
+!/src/**/*.json
+!/src/components/**/*.js
+!/src/components/**/*.jsx
+!/src/components/**/*.css
+!/src/components/**/*.js
 
 !/.editorconfig
 !/.gitattributes
