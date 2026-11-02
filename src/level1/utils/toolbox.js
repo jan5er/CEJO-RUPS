@@ -19,14 +19,16 @@ export const TOOLBOX = {
         },
         {
             kind: "category",
-            name: "Spremenljivke",
-            colour: "#ff8a3d",
-            custom: "VARIABLE"
+            name: "Seznami",
+            colour: "#745ba5",
+            contents: [
+                { kind: "block", type: "lists_create_with" },
+            ],
         },
         {
             kind: "category",
             name: "Elementi",
-            colour: "#19ff71",
+            colour: "#da7d12",
             contents: [
                 { kind: "block", type: "container_level1" },
                 { kind: "block", type: "heading_level1" },
@@ -34,6 +36,7 @@ export const TOOLBOX = {
                 { kind: "block", type: "input_level1" },
                 { kind: "block", type: "checkbox_level1" },
                 { kind: "block", type: "select_level1" },
+                { kind: "block", type: "button_level1" },
             ],
         },
 

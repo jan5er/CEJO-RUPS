@@ -1,5 +1,3 @@
-//Treba narediti Heading, Input, simple text, combobox, container, image, button
-
 import { Order } from 'blockly/javascript';
 import { forBlockLevel1 } from "../utils/generator";
 
@@ -18,7 +16,7 @@ export const headingLevel1JSON = {
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 225,
+  "colour": "#da7d12"
 };
 
 //Generator for heading element

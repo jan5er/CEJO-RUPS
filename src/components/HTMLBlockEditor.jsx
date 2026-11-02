@@ -141,7 +141,7 @@ export function HTMLBlockEditor({toolbox}) {
           </div>
 
           <div className="panel">
-            <div style={{display: tab === "html" ? 'block' : 'none'}}>
+            <div style={{display: tab === "html" ? 'block' : 'none', width: '100%'}}>
                 <p className="hint">Prikaz zgrajene spletne strani.</p>
                 <div id="output"></div>
             </div>
