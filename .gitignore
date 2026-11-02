@@ -12,6 +12,12 @@
 !/src/level*
 !/src/level1/*
 !/src/level1/*/*
+!/src/**/*.js
+!/src/**/*.json
+!/src/components/**/*.js
+!/src/components/**/*.jsx
+!/src/components/**/*.css
+!/src/components/**/*.js
 
 !/.editorconfig
 !/.gitattributes
