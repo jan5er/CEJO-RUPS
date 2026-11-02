@@ -6,7 +6,6 @@ import { TOOLBOX as defaultToolbox } from "./toolbox";
 import "./App.css";
 import { blocks as defaultBlocks } from "./blocks.js";
 import { forBlock as defaultGenerators } from "./generator";
-import { outputsMatch, tasks as defaultTasks } from "./tasks";
 
 /** Prešteje resnične bloke (brez senčnih privzetih vrednosti).*/
 function countBlocks(json) {
