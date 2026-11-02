@@ -1,7 +1,7 @@
 //Treba narediti Heading, Input, simple text, combobox, container, image, button
 
 import { Order } from 'blockly/javascript';
-import { forBlock } from './generator';
+import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing heading element for level 1
 export const headingLevel1JSON = {
@@ -24,8 +24,8 @@ export const headingLevel1JSON = {
 //Generator for heading element
 export const initGenHeading = () => {
 
-  forBlock['heading_level1'] = (block, generator) => {
-    const subStackTopBlock = block.getTopStackBlock();
+  forBlockLevel1['heading_level1'] = (block, generator) => {
+    const rootBlock = block.getRootBlock();
     const text = generator.valueToCode(block, 'TEXT', Order.NONE) || "''";
     const headingGenCode = generator.provideFunction_(
       'headingGenCode',
@@ -37,7 +37,7 @@ export const initGenHeading = () => {
         }`,
     );
     // Generate the function call for this block.
-    const code = `${headingGenCode}(${text},${subStackTopBlock.id});\n`;
+    const code = `${headingGenCode}(${text},"${rootBlock.data}");\n`;
     return code;
   };
 }

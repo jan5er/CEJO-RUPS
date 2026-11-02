@@ -1,7 +1,10 @@
+import { TOOLBOX } from "./utils/toolbox";
+import { blocksLevel1, forBlockLevel1 } from "./utils/generator";
+import { HTMLBlockEditor } from "../components/HTMLBlockEditor";
+
 export default function Level1(){
     return (<>
-        <h1>Podatki</h1>
-        <div id="output"></div>
+        <HTMLBlockEditor toolbox={TOOLBOX} blocks={blocksLevel1} forBlock={forBlockLevel1}/>
     </>);
     
 }

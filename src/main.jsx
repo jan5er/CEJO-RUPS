@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 import Level1 from "./level1/Level1.jsx";
 import App from "./App.jsx";
 

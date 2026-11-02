@@ -1,5 +1,5 @@
 import { Order } from 'blockly/javascript';
-import { forBlock } from './generator';
+import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing checkbox element for level 1
 export const checkboxLevel1JSON = {
@@ -30,8 +30,8 @@ export const checkboxLevel1JSON = {
 
 //Generator for checkbox element
 export const initGenCombobox = () => {
-  forBlock['checkbox_level1'] = (block, generator) => {
-    const subStackTopBlock = block.getTopStackBlock();
+  forBlockLevel1['checkbox_level1'] = (block, generator) => {
+    const rootBlock = block.getRootBlock();
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
 
@@ -57,7 +57,7 @@ export const initGenCombobox = () => {
         }`,
     );
     // Generate the function call for this block.
-    const code = `${checkboxGenCode}(${labelText},${varName},${subStackTopBlock.id});\n`;
+    const code = `${checkboxGenCode}(${labelText},${varName},"${rootBlock.data}");\n`;
     return code;
   };
 }

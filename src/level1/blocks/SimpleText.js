@@ -1,5 +1,5 @@
 import { Order } from "blockly/javascript";
-import { forBlock } from "./generator";
+import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing simple text element for level 1
 export const simpleTextLevel1JSON = {
@@ -21,8 +21,8 @@ export const simpleTextLevel1JSON = {
 
 //Generator for simple text element
 export const initGenSimpleText = () => {
-    forBlock["text_simple_level1"] = (block, generator) => {
-        const subStackTopBlock = block.getTopStackBlock();
+    forBlockLevel1["text_simple_level1"] = (block, generator) => {
+        const rootBlock = block.getRootBlock();
         const text = generator.valueToCode(block, "TEXT", Order.ATOMIC);
 
         const simpleTextGenCode = generator.provideFunction_(
@@ -36,7 +36,7 @@ export const initGenSimpleText = () => {
         }`,
         );
         // Generate the function call for this block.
-        const code = `${simpleTextGenCode}(${text},${subStackTopBlock.id});\n`;
+        const code = `${simpleTextGenCode}(${text},"${rootBlock.data}");\n`;
         return code;
     };
 };

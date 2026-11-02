@@ -14,10 +14,9 @@
 !/src/level1/*/*
 !/src/**/*.js
 !/src/**/*.json
-!/src/components/**/*.js
-!/src/components/**/*.jsx
-!/src/components/**/*.css
-!/src/components/**/*.js
+!/src/components
+!/src/components/*
+!/src/components/*/*
 
 !/.editorconfig
 !/.gitattributes

@@ -1,5 +1,5 @@
 import { Order } from 'blockly/javascript';
-import { forBlock } from './generator';
+import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing input element for level 1
 export const inputLevel1JSON = {
@@ -30,8 +30,8 @@ export const inputLevel1JSON = {
 
 //Generator for input element
 export const initGenInput = () => {
-  forBlock['input_level1'] = (block, generator) => {
-    const subStackTopBlock = block.getTopStackBlock();
+  forBlockLevel1['input_level1'] = (block, generator) => {
+    const rootBlock = block.getRootBlock();
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
 
@@ -54,12 +54,13 @@ export const initGenInput = () => {
                 containerDiv.appendChild(inputEl); 
                 
                 inputEl.addEventListener("input", function(event) {
+                    console.log(event.target.value);
                     varName = event.target.value;
                 });
         }`,
     );
     // Generate the function call for this block.
-    const code = `${inputGenCode}(${labelText},${varName},${subStackTopBlock.id});\n`;
+    const code = `${inputGenCode}(${labelText},${varName},"${rootBlock.data}");\n`;
     return code;
   };
 }

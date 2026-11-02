@@ -1,5 +1,5 @@
 import { Order } from 'blockly/javascript';
-import { forBlock } from './generator';
+import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing select element for level 1
 export const selectLevel1JSON = {
@@ -33,8 +33,8 @@ export const selectLevel1JSON = {
 
 //Generator for select element
 export const initGenSelect = () => {
-  forBlock['select_level1'] = (block, generator) => {
-    const subStackTopBlock = block.getTopStackBlock();
+  forBlockLevel1['select_level1'] = (block, generator) => {
+    const rootBlock = block.getRootBlock();
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const possibleValues = generator.valueToCode(block, 'POSSIBLE_VALUES', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
@@ -64,13 +64,13 @@ export const initGenSelect = () => {
                 containerDiv.appendChild(selectEl); 
                   
                 selectEl.addEventListener("change", function(event) {
-                    varName = selectEl.options[selectEl.selectedIndex].text;
+                    varName = selectEl.options[rootBlock.selectedIndex].text;
                 });
         }`,
     );
     
     // Generate the function call for this block.
-    const code = `${selectGenCode}(${labelText},${varName},${possibleValues},${subStackTopBlock.id});\n`;
+    const code = `${selectGenCode}(${labelText},${varName},${possibleValues},"${subStackTopBlock.data}");\n`;
     return code;
   };
 }

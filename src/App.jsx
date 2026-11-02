@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { BlockEditor } from "./components/BlockEditor";
-import "./generator";
 import { run } from "./interpreter";
 import { TOOLBOX } from "./toolbox";
 import "./App.css";
+import { blocks } from "./blocks.js";
+import { forBlock } from "./generator";
 
 /** Prešteje resnične bloke (brez senčnih privzetih vrednosti).*/
 function countBlocks(json) {
@@ -78,7 +79,7 @@ export default function App() {
 
       <main className="main">
         <section className="stage" aria-label="Delovni prostor z bloki">
-          <BlockEditor className="editor" toolbox={TOOLBOX} onCodeChange={setCode} onJsonChange={setJson} />
+          <BlockEditor className="editor" toolbox={TOOLBOX} blocks={blocks} forBlock={forBlock} onCodeChange={setCode} onJsonChange={setJson} />
 
           {blockCount === 0 && (
             <div className="empty" aria-hidden="true">
