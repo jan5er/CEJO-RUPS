@@ -31,9 +31,10 @@ export default function App() {
   const blockCount = countBlocks(json);
 
   const handleRun = useCallback(() => {
-    setResult({ ...run(json), at: time() });
+    setResult({ ...run(code), at: time() });
     setConsoleOpen(true);
-  }, [json]);
+    console.log("Run at", time(), "code:", code);
+  }, [code]);
 
   // Ctrl + Enter = zaženi
   useEffect(() => {
