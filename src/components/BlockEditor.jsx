@@ -25,13 +25,16 @@ Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2";
  * @param {(ws: Blockly.WorkspaceSvg) => void} [props.onWorkspaceChange]
  * @param {string} [props.className]
  */
-export function BlockEditor({ toolbox, initialJson, onJsonChange, onCodeChange, onWorkspaceChange, className }) {
+export function BlockEditor({ toolbox, blocks = [], forBlock = {}, initialJson, onJsonChange, onCodeChange, onWorkspaceChange, className }) {
     const containerRef = useRef(null);
     const cb = useRef({});
     cb.current = { onJsonChange, onCodeChange, onWorkspaceChange };
     const initialRef = useRef(initialJson);
 
     useEffect(() => {
+        if (blocks.length) Blockly.common.defineBlocks(blocks);
+        Object.assign(javascriptGenerator.forBlock, forBlock);
+
         const scheme = window.matchMedia("(prefers-color-scheme: dark)");
         const ws = Blockly.inject(containerRef.current, {
             ...WORKSPACE_OPTIONS,
@@ -68,7 +71,7 @@ export function BlockEditor({ toolbox, initialJson, onJsonChange, onCodeChange, 
             ro.disconnect();
             ws.dispose();
         };
-    }, [toolbox]);
+    }, [blocks, forBlock, toolbox]);
 
     return <div ref={containerRef} className={className} />;
 }
