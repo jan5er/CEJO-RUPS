@@ -1,14 +1,14 @@
 //Treba narediti Heading, Input, simple text, combobox, container, image, button, card
 
-import {forBlock} from './generator';
-import {Order} from 'blockly/javascript';
+import { forBlock } from './generator';
+import { Order } from 'blockly/javascript';
 
-//JSON for representing heading element for level 1
+//JSON for representing input element for level 1
 export const inputLevel1JSON = {
   "type": "input_level1",
   "tooltip": "Input",
   "helpUrl": "",
-  "message0": "Label: %1 Variable to change: %2 %3",
+  "message0": "Input Label: %1 Variable to change: %2 %3",
   "args0": [
     {
       "type": "input_value",
@@ -28,26 +28,25 @@ export const inputLevel1JSON = {
   "colour": 15
 }
 
-//Generator for heading element
+//Generator for input element
 export const initGenInput = () => {
-    forBlock['input_level1'] = (block, generator) => {
+  forBlock['input_level1'] = (block, generator) => {
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
-    
+
     const inputGenCode = generator.provideFunction_(
-            'inputGenCode',
-            `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, varName) {
+      'inputGenCode',
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, varName) {
                 const outputDiv = document.getElementById('output');
 
                 const labelEl = document.createElement('label');
                 labelEl.for = "lepo_ime";
-                labelEl.innerText = "Vrednost:"; //text
+                labelEl.innerText = labelText;
                 outputDiv.appendChild(labelEl);
 
                 const inputEl = document.createElement('input');
                 inputEl.type = "text";
                 inputEl.name = "lepo_ime";
-                inputEl.value = "hgjhgjhj";
                 inputEl.style.borderWidth = "1px";
                 inputEl.style.borderStyle = "solid";
                 outputDiv.appendChild(inputEl); 
@@ -60,6 +59,6 @@ export const initGenInput = () => {
     // Generate the function call for this block.
     const code = `${inputGenCode}(${labelText},${varName});\n`;
     return code;
-    };
+  };
 }
 
