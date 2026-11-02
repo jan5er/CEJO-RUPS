@@ -84,7 +84,7 @@ export default function App() {
               <div className="empty-emoji">🧩</div>
               <p>Povleci bloke iz menija na levi in jih zloži sem</p>
             </div>
-          )}  
+          )}
           <div className={`drawer${consoleOpen ? " open" : ""}`} role="region" aria-label="Konzola" aria-hidden={!consoleOpen}>
             <div className="drawer-head">
               <span className="drawer-title">Konzola</span>
