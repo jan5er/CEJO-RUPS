@@ -1,12 +1,14 @@
 //Treba narediti Heading, Input, simple text, combobox, container, image, button, card
 
-import { forBlock } from './generator';
 import { Order } from 'blockly/javascript';
+import { forBlock } from './generator';
 
 //JSON for representing heading element for level 1
 export const headingLevel1JSON = {
   "type": 'heading_level1',
-  "message0": 'Heading %1',
+  "tooltip": 'Naslov',
+  "helpUrl": '',
+  "message0": 'Naslov %1',
   "args0": [
     {
       "type": 'input_value',
@@ -14,28 +16,28 @@ export const headingLevel1JSON = {
       "check": 'String',
     },
   ],
-  "colour": 160,
-  "tooltip": 'Heading',
-  "helpUrl": '',
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 225,
 };
 
 //Generator for heading element
 export const initGenHeading = () => {
 
   forBlock['heading_level1'] = (block, generator) => {
+    const subStackTopBlock = block.getTopStackBlock();
     const text = generator.valueToCode(block, 'TEXT', Order.NONE) || "''";
     const headingGenCode = generator.provideFunction_(
       'headingGenCode',
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text) {
-
-            const outputDiv = document.getElementById('output');
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
+            const containerDiv = document.getElementById(containerId);
             const textEl = document.createElement('h1');
             textEl.innerText = text;
-            outputDiv.appendChild(textEl);
+            containerDiv.appendChild(textEl);
         }`,
     );
     // Generate the function call for this block.
-    const code = `${headingGenCode}(${text});\n`;
+    const code = `${headingGenCode}(${text},${subStackTopBlock.id});\n`;
     return code;
   };
 }

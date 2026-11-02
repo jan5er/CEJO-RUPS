@@ -1,12 +1,12 @@
-import { forBlock } from "./generator";
 import { Order } from "blockly/javascript";
+import { forBlock } from "./generator";
 
 //JSON for representing simple text element for level 1
 export const simpleTextLevel1JSON = {
     "type": "text_simple_level1",
-    "tooltip": "Simple Text",
+    "tooltip": "Preprosto besedilo",
     "helpUrl": "",
-    "message0": "Simple Text %1",
+    "message0": "Preprosto besedilo %1",
     "args0": [
         {
             "type": "input_value",
@@ -14,26 +14,29 @@ export const simpleTextLevel1JSON = {
             "check": "String"
         }
     ],
+    "previousStatement": null,
+    "nextStatement": null,
     "colour": 225
 };
 
 //Generator for simple text element
 export const initGenSimpleText = () => {
-    forBlock["input_level1"] = (block, generator) => {
+    forBlock["text_simple_level1"] = (block, generator) => {
+        const subStackTopBlock = block.getTopStackBlock();
         const text = generator.valueToCode(block, "TEXT", Order.ATOMIC);
 
-        const inputGenCode = generator.provideFunction_(
-            "inputGenCode",
-            `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text) {
-                const outputDiv = document.getElementById('output');
+        const simpleTextGenCode = generator.provideFunction_(
+            "simpleTextGenCode",
+            `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
+                const containerDiv = document.getElementById(containerId);
 
                 const textlEl = document.createElement('p');
                 textlEl.innerText = text;
-                outputDiv.appendChild(textlEl);
+                containerDiv.appendChild(textlEl);
         }`,
         );
         // Generate the function call for this block.
-        const code = `${inputGenCode}(${text});\n`;
+        const code = `${simpleTextGenCode}(${text},${subStackTopBlock.id});\n`;
         return code;
     };
 };

@@ -1,14 +1,12 @@
-//Treba narediti Heading, Input, simple text, combobox, container, image, button, card
-
-import { forBlock } from './generator';
 import { Order } from 'blockly/javascript';
+import { forBlock } from './generator';
 
 //JSON for representing input element for level 1
 export const inputLevel1JSON = {
   "type": "input_level1",
-  "tooltip": "Input",
+  "tooltip": "Vnosno polje, ki shrani spremembe v spremenljivko",
   "helpUrl": "",
-  "message0": "Input Label: %1 Variable to change: %2 %3",
+  "message0": "Vnosno polje Oznaka: %1 Spremenljivka: %2 %3",
   "args0": [
     {
       "type": "input_value",
@@ -25,31 +23,35 @@ export const inputLevel1JSON = {
       "name": "VARIABLE_NAME_DUMMY"
     }
   ],
-  "colour": 15
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 225
 }
 
 //Generator for input element
 export const initGenInput = () => {
   forBlock['input_level1'] = (block, generator) => {
+    const subStackTopBlock = block.getTopStackBlock();
     const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
     const varName = generator.getVariableName(block.getFieldValue('VAR_NAME'));
 
     const inputGenCode = generator.provideFunction_(
       'inputGenCode',
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, varName) {
-                const outputDiv = document.getElementById('output');
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, varName, containerId) {
+                const containerDiv = document.getElementById(containerId);
+                const name = "Named" + Math.floor(Math.random() * 100000);
 
                 const labelEl = document.createElement('label');
-                labelEl.for = "lepo_ime";
+                labelEl.for = name;
                 labelEl.innerText = labelText;
-                outputDiv.appendChild(labelEl);
+                containerDiv.appendChild(labelEl);
 
                 const inputEl = document.createElement('input');
                 inputEl.type = "text";
-                inputEl.name = "lepo_ime";
+                inputEl.name = name;
                 inputEl.style.borderWidth = "1px";
                 inputEl.style.borderStyle = "solid";
-                outputDiv.appendChild(inputEl); 
+                containerDiv.appendChild(inputEl); 
                 
                 element.addEventListener("input", function(event) {
                     varName = event.target.value;
@@ -57,7 +59,7 @@ export const initGenInput = () => {
         }`,
     );
     // Generate the function call for this block.
-    const code = `${inputGenCode}(${labelText},${varName});\n`;
+    const code = `${inputGenCode}(${labelText},${varName},${subStackTopBlock.id});\n`;
     return code;
   };
 }
