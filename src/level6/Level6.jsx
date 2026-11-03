@@ -10,7 +10,7 @@ export default function Level6() {
       toolbox={toolboxLevel6}
       blockDefinitions={blocksLevel6}
       generators={forBlockLevel6}
-      nextLevel={7}
+      completionMessage="Čestitke, zaključil si osnove programiranja!"
       showPreview
     />
   );

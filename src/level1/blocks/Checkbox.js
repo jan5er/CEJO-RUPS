@@ -28,12 +28,13 @@ export const initGenCombobox = () => {
     const checkboxGenCode = generator.provideFunction_(
       'checkboxGenCode',
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerId) {
-                const containerDiv = document.getElementById(containerId);
+                const containerDiv = document.getElementById(containerId) || document.getElementById('output');
                 const name = "NamedCheckbox" + Math.floor(Math.random() * 100000);
 
                 const labelEl = document.createElement('label');
                 labelEl.for = name;
                 labelEl.innerText = labelText;
+                if (!containerDiv) return;
                 containerDiv.appendChild(labelEl);
 
                 const inputEl = document.createElement('input');
@@ -47,4 +48,3 @@ export const initGenCombobox = () => {
     return code;
   };
 }
-

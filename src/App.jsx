@@ -44,7 +44,7 @@ function readPreviewOutput(element) {
   return lines;
 }
 
-export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = defaultToolbox, blockDefinitions = defaultBlocks, generators = defaultGenerators, nextLevel, showPreview = false }) {
+export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = defaultToolbox, blockDefinitions = defaultBlocks, generators = defaultGenerators, nextLevel, completionMessage, showPreview = false }) {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [json, setJson] = useState(null);
@@ -106,6 +106,14 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
   };
 
   const failed = Boolean(result?.error);
+
+  if (completionMessage && completedTasks.size === levelTasks.length) {
+    return (
+      <main className="completion-screen">
+        <h1>{completionMessage}</h1>
+      </main>
+    );
+  }
 
   return (
     <div className="app">

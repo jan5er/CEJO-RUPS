@@ -49,6 +49,23 @@ body {
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+.completion-screen {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 24px;
+  background: var(--bg);
+  text-align: center;
+}
+
+.completion-screen h1 {
+  max-width: 760px;
+  margin: 0;
+  color: var(--ac);
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.15;
+}
+
 button {
   font: inherit;
   color: inherit;

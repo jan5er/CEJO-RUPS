@@ -28,10 +28,10 @@ export const initGenButton = () => {
     const buttonGenCode = generator.provideFunction_(
       'buttonGenCode',
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
-            const containerDiv = document.getElementById(containerId);
+            const containerDiv = document.getElementById(containerId) || document.getElementById('output');
             const buttonEl = document.createElement('button');
             buttonEl.innerText = text;
-            containerDiv.appendChild(buttonEl);
+            if (containerDiv) containerDiv.appendChild(buttonEl);
         }`,
     );
     // Generate the function call for this block.
@@ -39,4 +39,3 @@ export const initGenButton = () => {
     return code;
   };
 }
-

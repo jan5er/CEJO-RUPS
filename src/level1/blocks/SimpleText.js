@@ -28,11 +28,11 @@ export const initGenSimpleText = () => {
         const simpleTextGenCode = generator.provideFunction_(
             "simpleTextGenCode",
             `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
-                const containerDiv = document.getElementById(containerId);
+                const containerDiv = document.getElementById(containerId) || document.getElementById('output');
 
                 const textlEl = document.createElement('p');
                 textlEl.innerText = text;
-                containerDiv.appendChild(textlEl);
+                if (containerDiv) containerDiv.appendChild(textlEl);
         }`,
         );
         // Generate the function call for this block.

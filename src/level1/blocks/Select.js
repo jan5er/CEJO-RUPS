@@ -36,12 +36,13 @@ export const initGenSelect = () => {
     const selectGenCode = generator.provideFunction_(
       'selectGenCode',
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, possibleValues, containerId) {
-                const containerDiv = document.getElementById(containerId);
+                const containerDiv = document.getElementById(containerId) || document.getElementById('output');
                 const name = "NamedSelect" + Math.floor(Math.random() * 100000);
 
                 const labelEl = document.createElement('label');
                 labelEl.for = name;
                 labelEl.innerText = labelText;
+                if (!containerDiv) return;
                 containerDiv.appendChild(labelEl);
 
                 const selectEl = document.createElement('select');
@@ -65,4 +66,3 @@ export const initGenSelect = () => {
     return code;
   };
 }
-

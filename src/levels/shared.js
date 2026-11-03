@@ -7,6 +7,29 @@ const valueInput = (name, check = "String") => ({
   check,
 });
 
+export function colorBlock() {
+  return {
+    type: "color_value",
+    message0: "barva %1",
+    args0: [
+      {
+        type: "field_dropdown",
+        name: "COLOR",
+        options: [
+          ["črna", "#000000"],
+          ["bela", "#ffffff"],
+          ["rdeča", "#e03131"],
+          ["zelena", "#2f9e44"],
+          ["modra", "#1971c2"],
+          ["rumena", "#f08c00"],
+        ],
+      },
+    ],
+    output: "String",
+    colour: 20,
+  };
+}
+
 export function htmlElementBlock() {
   return {
     type: "html_element",
@@ -39,11 +62,11 @@ export function cssStyleBlock() {
     message0: "CSS za %1 velikost %2 barva %3 teža %4 margin %5 padding %6",
     args0: [
       { type: "field_input", name: "ID", text: "element" },
-      valueInput("FONT_SIZE"),
-      valueInput("COLOR"),
-      valueInput("FONT_WEIGHT"),
-      valueInput("MARGIN"),
-      valueInput("PADDING"),
+      valueInput("FONT_SIZE", "Number"),
+      valueInput("COLOR", "String"),
+      valueInput("FONT_WEIGHT", "Number"),
+      valueInput("MARGIN", "Number"),
+      valueInput("PADDING", "Number"),
     ],
     previousStatement: null,
     nextStatement: null,
@@ -92,11 +115,15 @@ export function ifBlock() {
 export function switchBlock() {
   return {
     type: "switch_statement",
-    message0: "switch %1 primer %2 naredi %3 sicer %4",
+    message0: "switch ( %1 ) case %2: %3 case %4: %5 case %6: %7 default: %8",
     args0: [
       valueInput("VALUE"),
       valueInput("CASE"),
       { type: "input_statement", name: "DO" },
+      valueInput("CASE_2"),
+      { type: "input_statement", name: "DO_2" },
+      valueInput("CASE_3"),
+      { type: "input_statement", name: "DO_3" },
       { type: "input_statement", name: "DEFAULT" },
     ],
     previousStatement: null,
@@ -144,15 +171,22 @@ export function registerGenerators() {
     const tag = block.getFieldValue("TAG") || "p";
     const id = block.getFieldValue("ID") || "element";
     const text = generator.valueToCode(block, "TEXT", Order.ATOMIC) || '""';
-    return `{ const name = "NamedElement" + Math.floor(Math.random() * 100000); const element = document.createElement("${tag}"); element.id = "${id}"; element.name = name; element.${tag === "input" ? "placeholder" : "textContent"} = ${text}; document.getElementById("output").appendChild(element); }\n`;
+    return `{ const name = "NamedElement" + Math.floor(Math.random() * 100000); const element = document.createElement("${tag}"); element.id = "${id}"; element.name = name; element.${tag === "input" ? "placeholder" : "textContent"} = ${text}; const output = document.getElementById("output"); if (output) output.appendChild(element); }\n`;
   };
 
   generators.css_style = (block, generator) => {
-    const value = (name) =>
-      generator.valueToCode(block, name, Order.ATOMIC) || '""';
+    const numberValue = (name) =>
+      generator.valueToCode(block, name, Order.ATOMIC) || "0";
+    const color =
+      generator.valueToCode(block, "COLOR", Order.ATOMIC) || '"#000000"';
     const id = block.getFieldValue("ID") || "element";
-    return `{ const element = document.getElementById("${id}"); if (element) { element.style.fontSize = ${value("FONT_SIZE")}; element.style.color = ${value("COLOR")}; element.style.fontWeight = ${value("FONT_WEIGHT")}; element.style.margin = ${value("MARGIN")}; element.style.padding = ${value("PADDING")}; } }\n`;
+    return `{ const element = document.getElementById("${id}"); if (element) { element.style.fontSize = ${numberValue("FONT_SIZE")} + "px"; element.style.color = ${color}; element.style.fontWeight = Math.min(900, Math.max(100, ${numberValue("FONT_WEIGHT")} * 100)); element.style.margin = ${numberValue("MARGIN")} + "px"; element.style.padding = ${numberValue("PADDING")} + "px"; } }\n`;
   };
+
+  generators.color_value = (block) => [
+    JSON.stringify(block.getFieldValue("COLOR") || "#000000"),
+    Order.ATOMIC,
+  ];
 
   generators.variable_set = (block, generator) => {
     const name = block.getFieldValue("NAME") || "vrednost";
@@ -173,8 +207,19 @@ export function registerGenerators() {
 
   generators.switch_statement = (block, generator) => {
     const value = generator.valueToCode(block, "VALUE", Order.NONE) || '""';
-    const caseValue = generator.valueToCode(block, "CASE", Order.NONE) || '""';
-    return `switch (${value}) { case ${caseValue}:\n${generator.statementToCode(block, "DO")} break; default:\n${generator.statementToCode(block, "DEFAULT")}}\n`;
+    const caseValue = (name) =>
+      generator.valueToCode(block, name, Order.NONE) || '""';
+    const caseCode = (name) => generator.statementToCode(block, name);
+    const defaultCode = generator.statementToCode(block, "DEFAULT");
+    return `switch (${value}) {
+  case ${caseValue("CASE")}:
+${caseCode("DO")}    break;
+  case ${caseValue("CASE_2")}:
+${caseCode("DO_2")}    break;
+  case ${caseValue("CASE_3")}:
+${caseCode("DO_3")}    break;
+  default:
+${defaultCode}}\n`;
   };
 
   generators.repeat_loop = (block, generator) => {

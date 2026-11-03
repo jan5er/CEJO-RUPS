@@ -28,10 +28,10 @@ export const initGenHeading = () => {
     const headingGenCode = generator.provideFunction_(
       'headingGenCode',
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
-            const containerDiv = document.getElementById(containerId);
+            const containerDiv = document.getElementById(containerId) || document.getElementById('output');
             const textEl = document.createElement('h1');
             textEl.innerText = text;
-            containerDiv.appendChild(textEl);
+            if (containerDiv) containerDiv.appendChild(textEl);
         }`,
     );
     // Generate the function call for this block.
@@ -39,4 +39,3 @@ export const initGenHeading = () => {
     return code;
   };
 }
-
