@@ -1,24 +1,31 @@
 import * as Blockly from "blockly/core";
 import { javascriptGenerator, Order } from "blockly/javascript";
 
-export function outputBlock(level, preview = true) {
-  return {
-    type: `level${level}_output`,
-    message0: `Izpiši številko nivoja ${level}`,
-    previousStatement: null,
-    nextStatement: null,
-    colour: 120,
-    preview,
-  };
-}
+const valueInput = (name, check = "String") => ({
+  type: "input_value",
+  name,
+  check,
+});
 
-export function inputBlock(level) {
+export function htmlElementBlock() {
   return {
-    type: `level${level}_input`,
-    message0: "Vnosno polje %1 shrani v %2",
+    type: "html_element",
+    message0: "HTML %1 id %2 vsebina %3",
     args0: [
-      { type: "input_value", name: "LABEL", check: "String" },
-      { type: "field_input", name: "NAME", text: "vnos" },
+      {
+        type: "field_dropdown",
+        name: "TAG",
+        options: [
+          ["h1", "h1"],
+          ["h2", "h2"],
+          ["p", "p"],
+          ["small", "small"],
+          ["i", "i"],
+          ["input", "input"],
+        ],
+      },
+      { type: "field_input", name: "ID", text: "element" },
+      valueInput("TEXT"),
     ],
     previousStatement: null,
     nextStatement: null,
@@ -26,58 +33,31 @@ export function inputBlock(level) {
   };
 }
 
-export function buttonActionBlock(level) {
+export function cssStyleBlock() {
   return {
-    type: `level${level}_button_action`,
-    message0: "Gumb %1 kopira vnos %2 v spremenljivko %3",
+    type: "css_style",
+    message0: "CSS za %1 velikost %2 barva %3 teža %4 margin %5 padding %6",
     args0: [
-      { type: "input_value", name: "LABEL", check: "String" },
-      { type: "field_input", name: "SOURCE", text: "vnos" },
-      { type: "field_input", name: "TARGET", text: "vrednost" },
+      { type: "field_input", name: "ID", text: "element" },
+      valueInput("FONT_SIZE"),
+      valueInput("COLOR"),
+      valueInput("FONT_WEIGHT"),
+      valueInput("MARGIN"),
+      valueInput("PADDING"),
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: 30,
+    colour: 160,
   };
 }
 
-export function textBlock(level) {
+export function variableSetBlock() {
   return {
-    type: `level${level}_text`,
-    message0: "Besedilo %1",
-    args0: [{ type: "input_value", name: "TEXT", check: "String" }],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 210,
-  };
-}
-
-export function styledTextBlock(level) {
-  return {
-    type: `level${level}_styled_text`,
-    message0:
-      "Besedilo %1 velikost %2 barva %3 teža %4 odmik %5 notranji odmik %6",
-    args0: [
-      { type: "input_value", name: "TEXT", check: "String" },
-      { type: "input_value", name: "FONT_SIZE", check: "String" },
-      { type: "input_value", name: "COLOR", check: "String" },
-      { type: "input_value", name: "FONT_WEIGHT", check: "String" },
-      { type: "input_value", name: "MARGIN", check: "String" },
-      { type: "input_value", name: "PADDING", check: "String" },
-    ],
-    previousStatement: null,
-    nextStatement: null,
-    colour: 210,
-  };
-}
-
-export function variableSetBlock(level) {
-  return {
-    type: `level${level}_set_variable`,
-    message0: "Nastavi spremenljivko %1 na %2",
+    type: "variable_set",
+    message0: "nastavi spremenljivko %1 na %2",
     args0: [
       { type: "field_input", name: "NAME", text: "vrednost" },
-      { type: "input_value", name: "VALUE", check: "String" },
+      valueInput("VALUE"),
     ],
     previousStatement: null,
     nextStatement: null,
@@ -85,22 +65,22 @@ export function variableSetBlock(level) {
   };
 }
 
-export function variableGetBlock(level) {
+export function variableGetBlock() {
   return {
-    type: `level${level}_get_variable`,
-    message0: "Vrednost spremenljivke %1",
+    type: "variable_get",
+    message0: "vrednost spremenljivke %1",
     args0: [{ type: "field_input", name: "NAME", text: "vrednost" }],
-    output: "String",
+    output: null,
     colour: 330,
   };
 }
 
-export function ifBlock(level) {
+export function ifBlock() {
   return {
-    type: `level${level}_if`,
-    message0: "če %1 naredi %2",
+    type: "if_statement",
+    message0: "če %1 potem %2",
     args0: [
-      { type: "input_value", name: "CONDITION", check: "Boolean" },
+      valueInput("CONDITION", "Boolean"),
       { type: "input_statement", name: "DO" },
     ],
     previousStatement: null,
@@ -109,13 +89,13 @@ export function ifBlock(level) {
   };
 }
 
-export function switchBlock(level) {
+export function switchBlock() {
   return {
-    type: `level${level}_switch`,
-    message0: "izberi %1 primer %2 naredi %3 sicer %4",
+    type: "switch_statement",
+    message0: "switch %1 primer %2 naredi %3 sicer %4",
     args0: [
-      { type: "input_value", name: "VALUE" },
-      { type: "input_value", name: "CASE", check: "String" },
+      valueInput("VALUE"),
+      valueInput("CASE"),
       { type: "input_statement", name: "DO" },
       { type: "input_statement", name: "DEFAULT" },
     ],
@@ -125,17 +105,28 @@ export function switchBlock(level) {
   };
 }
 
-export function repeatBlock(level) {
+export function repeatBlock() {
   return {
-    type: `level${level}_repeat`,
+    type: "repeat_loop",
     message0: "ponovi %1 krat %2",
     args0: [
-      { type: "input_value", name: "TIMES", check: "Number" },
+      valueInput("TIMES", "Number"),
       { type: "input_statement", name: "DO" },
     ],
     previousStatement: null,
     nextStatement: null,
     colour: 290,
+  };
+}
+
+export function consoleOutputBlock() {
+  return {
+    type: "console_output",
+    message0: "izpiši v konzolo %1",
+    args0: [valueInput("VALUE")],
+    previousStatement: null,
+    nextStatement: null,
+    colour: 120,
   };
 }
 
@@ -146,107 +137,68 @@ export function registerBlocks(definitions) {
   return Object.values(blocks);
 }
 
-export function registerGenerators(level, { preview = true } = {}) {
+export function registerGenerators() {
   const generators = Object.create(null);
-  const outputType = `level${level}_output`;
-  generators[outputType] = () =>
-    preview
-      ? `document.getElementById("output").textContent += "${level}\\n"; console.log("${level}");\n`
-      : `console.log("${level}");\n`;
 
-  const textType = `level${level}_text`;
-  generators[textType] = (block, generator) => {
+  generators.html_element = (block, generator) => {
+    const tag = block.getFieldValue("TAG") || "p";
+    const id = block.getFieldValue("ID") || "element";
     const text = generator.valueToCode(block, "TEXT", Order.ATOMIC) || '""';
-    return `const textElement${block.id} = document.createElement("p"); textElement${block.id}.textContent = ${text}; document.getElementById("output").appendChild(textElement${block.id});\n`;
+    return `{ const name = "NamedElement" + Math.floor(Math.random() * 100000); const element = document.createElement("${tag}"); element.id = "${id}"; element.name = name; element.${tag === "input" ? "placeholder" : "textContent"} = ${text}; document.getElementById("output").appendChild(element); }\n`;
   };
 
-  const styledType = `level${level}_styled_text`;
-  generators[styledType] = (block, generator) => {
+  generators.css_style = (block, generator) => {
     const value = (name) =>
       generator.valueToCode(block, name, Order.ATOMIC) || '""';
-    return `const styledElement${block.id} = document.createElement("p"); styledElement${block.id}.textContent = ${value("TEXT")}; styledElement${block.id}.style.fontSize = ${value("FONT_SIZE")}; styledElement${block.id}.style.color = ${value("COLOR")}; styledElement${block.id}.style.fontWeight = ${value("FONT_WEIGHT")}; styledElement${block.id}.style.margin = ${value("MARGIN")}; styledElement${block.id}.style.padding = ${value("PADDING")}; document.getElementById("output").appendChild(styledElement${block.id});\n`;
+    const id = block.getFieldValue("ID") || "element";
+    return `{ const element = document.getElementById("${id}"); if (element) { element.style.fontSize = ${value("FONT_SIZE")}; element.style.color = ${value("COLOR")}; element.style.fontWeight = ${value("FONT_WEIGHT")}; element.style.margin = ${value("MARGIN")}; element.style.padding = ${value("PADDING")}; } }\n`;
   };
 
-  const setType = `level${level}_set_variable`;
-  generators[setType] = (block, generator) => {
+  generators.variable_set = (block, generator) => {
     const name = block.getFieldValue("NAME") || "vrednost";
     const value = generator.valueToCode(block, "VALUE", Order.ATOMIC) || '""';
-    return `window.level${level}Variables = window.level${level}Variables || {}; window.level${level}Variables["${name}"] = ${value};\n`;
+    return `globalThis.__programVariables = globalThis.__programVariables || {}; globalThis.__programVariables["${name}"] = ${value};\n`;
   };
 
-  const getType = `level${level}_get_variable`;
-  generators[getType] = (block) => [
-    `window.level${level}Variables["${block.getFieldValue("NAME") || "vrednost"}"]`,
+  generators.variable_get = (block) => [
+    `globalThis.__programVariables?.["${block.getFieldValue("NAME") || "vrednost"}"] ?? ""`,
     Order.ATOMIC,
   ];
 
-  const inputType = `level${level}_input`;
-  generators[inputType] = (block, generator) => {
-    const label = generator.valueToCode(block, "LABEL", Order.ATOMIC) || '""';
-    const name = block.getFieldValue("NAME") || "vnos";
-    return `const input${block.id} = document.createElement("input"); input${block.id}.placeholder = ${label}; input${block.id}.dataset.variable = "${name}"; input${block.id}.addEventListener("input", (event) => { window.level${level}Variables["${name}"] = event.target.value; }); document.getElementById("output").appendChild(input${block.id});\n`;
-  };
-
-  const buttonType = `level${level}_button_action`;
-  generators[buttonType] = (block, generator) => {
-    const label =
-      generator.valueToCode(block, "LABEL", Order.ATOMIC) || '"Gumb"';
-    const source = block.getFieldValue("SOURCE") || "vnos";
-    const target = block.getFieldValue("TARGET") || "vrednost";
-    return `const button${block.id} = document.createElement("button"); button${block.id}.textContent = ${label}; button${block.id}.addEventListener("click", () => { window.level${level}Variables["${target}"] = window.level${level}Variables["${source}"] ?? ""; }); document.getElementById("output").appendChild(button${block.id});\n`;
-  };
-
-  const ifType = `level${level}_if`;
-  generators[ifType] = (block, generator) => {
+  generators.if_statement = (block, generator) => {
     const condition =
       generator.valueToCode(block, "CONDITION", Order.NONE) || "false";
-    const statements = generator.statementToCode(block, "DO");
-    return `if (${condition}) {\n${statements}}\n`;
+    return `if (${condition}) {\n${generator.statementToCode(block, "DO")}}\n`;
   };
 
-  const switchType = `level${level}_switch`;
-  generators[switchType] = (block, generator) => {
+  generators.switch_statement = (block, generator) => {
     const value = generator.valueToCode(block, "VALUE", Order.NONE) || '""';
     const caseValue = generator.valueToCode(block, "CASE", Order.NONE) || '""';
-    const statements = generator.statementToCode(block, "DO");
-    const fallback = generator.statementToCode(block, "DEFAULT");
-    return `switch (${value}) { case ${caseValue}:\n${statements} break; default:\n${fallback}}\n`;
+    return `switch (${value}) { case ${caseValue}:\n${generator.statementToCode(block, "DO")} break; default:\n${generator.statementToCode(block, "DEFAULT")}}\n`;
   };
 
-  const repeatType = `level${level}_repeat`;
-  generators[repeatType] = (block, generator) => {
+  generators.repeat_loop = (block, generator) => {
     const times = generator.valueToCode(block, "TIMES", Order.NONE) || "0";
-    const statements = generator.statementToCode(block, "DO");
-    return `for (let repeatIndex${block.id} = 0; repeatIndex${block.id} < ${times}; repeatIndex${block.id}++) {\n${statements}}\n`;
+    return `{ for (let index = 0; index < ${times}; index++) {\n${generator.statementToCode(block, "DO")}} }\n`;
+  };
+
+  generators.console_output = (block, generator) => {
+    const value = generator.valueToCode(block, "VALUE", Order.ATOMIC) || '""';
+    return `console.log(${value});\n`;
   };
 
   Object.assign(javascriptGenerator.forBlock, generators);
   return generators;
 }
 
-export function extendLevel(previous, blocks, generators, toolbox) {
-  return {
-    blocks: [...previous.blocks, ...blocks],
-    generators: { ...previous.generators, ...generators },
-    toolbox: {
-      kind: "categoryToolbox",
-      contents: [...previous.toolbox.contents, ...toolbox.contents],
-    },
-  };
-}
-
 export function mergeToolboxes(...toolboxes) {
   const categories = new Map();
-
   for (const toolbox of toolboxes) {
     for (const item of toolbox.contents) {
-      if (item.kind !== "category") {
-        continue;
-      }
-
-      const existing = categories.get(item.name);
-      if (existing) {
-        existing.contents = [...existing.contents, ...(item.contents ?? [])];
+      if (item.kind !== "category") continue;
+      const current = categories.get(item.name);
+      if (current) {
+        current.contents.push(...(item.contents ?? []));
       } else {
         categories.set(item.name, {
           ...item,
@@ -255,9 +207,5 @@ export function mergeToolboxes(...toolboxes) {
       }
     }
   }
-
-  return {
-    kind: "categoryToolbox",
-    contents: [...categories.values()],
-  };
+  return { kind: "categoryToolbox", contents: [...categories.values()] };
 }

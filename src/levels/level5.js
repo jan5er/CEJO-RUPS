@@ -1,55 +1,24 @@
 import { blocksLevel4, forBlockLevel4, toolboxLevel4 } from "./level4";
 import {
   mergeToolboxes,
-  outputBlock,
   registerBlocks,
   registerGenerators,
-  styledTextBlock,
   switchBlock,
-  variableGetBlock,
-  variableSetBlock,
 } from "./shared";
 
-const ownBlocksLevel5 = registerBlocks([
-  outputBlock(5),
-  styledTextBlock(5),
-  variableSetBlock(5),
-  variableGetBlock(5),
-  switchBlock(5),
-]);
-const ownGeneratorsLevel5 = registerGenerators(5);
+const ownBlocks = registerBlocks([switchBlock()]);
+const ownGenerators = registerGenerators();
 
-const ownToolboxLevel5 = {
+export const blocksLevel5 = [...blocksLevel4, ...ownBlocks];
+export const forBlockLevel5 = { ...forBlockLevel4, ...ownGenerators };
+export const toolboxLevel5 = mergeToolboxes(toolboxLevel4, {
   kind: "categoryToolbox",
   contents: [
     {
       kind: "category",
       name: "Switch",
-      colour: "#ff5d7a",
-      contents: [{ kind: "block", type: "level5_switch" }],
-    },
-    {
-      kind: "category",
-      name: "Spremenljivke",
-      colour: "#ff8a3d",
-      contents: [
-        { kind: "block", type: "level5_set_variable" },
-        { kind: "block", type: "level5_get_variable" },
-      ],
-    },
-    {
-      kind: "category",
-      name: "HTML in CSS",
-      colour: "#4c6ef5",
-      contents: [
-        { kind: "block", type: "level5_styled_text" },
-        { kind: "block", type: "level5_output" },
-        { kind: "block", type: "text" },
-      ],
+      colour: "#8957c5",
+      contents: [{ kind: "block", type: "switch_statement" }],
     },
   ],
-};
-
-export const blocksLevel5 = [...blocksLevel4, ...ownBlocksLevel5];
-export const forBlockLevel5 = { ...forBlockLevel4, ...ownGeneratorsLevel5 };
-export const toolboxLevel5 = mergeToolboxes(toolboxLevel4, ownToolboxLevel5);
+});
