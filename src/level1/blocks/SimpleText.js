@@ -16,7 +16,7 @@ export const simpleTextLevel1JSON = {
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 225
+    "colour": "#da7d12"
 };
 
 //Generator for simple text element

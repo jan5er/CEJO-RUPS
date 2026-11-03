@@ -12,7 +12,7 @@ export const containerLevel1JSON = {
       "name": "SUB_ELEMENTS"
     }
   ],
-  "colour": 225
+  "colour": "#da7d12"
 };
 
 //Generator for container element
@@ -20,10 +20,8 @@ export const initGenContainer = () => {
     forBlockLevel1["container_level1"] = (block, generator) => {
         const containerId = "Container" + Math.floor(Math.random() * 100000);
         block.data = containerId;
-        console.log(block.data);
         const statement_sub_elements = generator.statementToCode(block, 'SUB_ELEMENTS');
 
-        console.log(statement_sub_elements);
         const containerGenCode = generator.provideFunction_(
             "containerGenCode",
             `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(containerId) {

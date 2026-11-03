@@ -5,6 +5,7 @@ import { simpleTextLevel1JSON, initGenSimpleText } from "../blocks/SimpleText";
 import { containerLevel1JSON, initGenContainer } from "../blocks/Container";
 import { checkboxLevel1JSON, initGenCombobox } from "../blocks/Checkbox";
 import { selectLevel1JSON, initGenSelect } from "../blocks/Select";
+import { buttonLevel1JSON, initGenButton } from "../blocks/Button";
 import { javascriptGenerator } from "blockly/javascript";
 
 export const blocksLevel1 = Blockly.common.createBlockDefinitionsFromJsonArray([
@@ -14,9 +15,8 @@ export const blocksLevel1 = Blockly.common.createBlockDefinitionsFromJsonArray([
     containerLevel1JSON,
     checkboxLevel1JSON,
     selectLevel1JSON,
+    buttonLevel1JSON,
 ]);
-
-console.log(blocksLevel1);
 
 //Object that saves generetors for blocks
 export const forBlockLevel1 = Object.create(null);
@@ -28,6 +28,7 @@ initGenSimpleText();
 initGenContainer();
 initGenCombobox();
 initGenSelect();
+initGenButton();
 
 //Registering all blocks and generators into Blockly
 Blockly.common.defineBlocks(blocksLevel1);
