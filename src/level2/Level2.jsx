@@ -1,7 +1,5 @@
 import App from "../App";
-import { blocks as blocksLevel2 } from "../blocks";
-import { forBlock as forBlockLevel2 } from "../generator";
-import { TOOLBOX as toolboxLevel2 } from "../toolbox";
+import { blocksLevel2, forBlockLevel2, toolboxLevel2 } from "../levels/level2";
 import { tasksLevel2 } from "./tasks";
 
 export default function Level2() {
@@ -12,6 +10,7 @@ export default function Level2() {
       toolbox={toolboxLevel2}
       blockDefinitions={blocksLevel2}
       generators={forBlockLevel2}
+      nextLevel={3}
       showPreview
     />
   );
