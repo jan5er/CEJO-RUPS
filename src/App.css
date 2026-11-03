@@ -180,6 +180,11 @@ button:focus-visible {
   font-weight: 600;
 }
 
+a.btn {
+  color: inherit;
+  text-decoration: none;
+}
+
 .btn:hover:not(:disabled) {
   border-color: var(--ac);
 }

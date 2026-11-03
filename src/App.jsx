@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { BlockEditor } from "./components/BlockEditor";
 import { run } from "./interpreter";
+import CoinBadge from "./shop/CoinBadge";
+import { awardTask } from "./shop/progress";
 import { TOOLBOX as defaultToolbox } from "./toolbox";
 import "./App.css";
 import { blocks as defaultBlocks } from "./blocks.js";
@@ -59,7 +61,7 @@ function readPreviewOutput(element) {
   return lines;
 }
 
-export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = defaultToolbox, blockDefinitions = defaultBlocks, generators = defaultGenerators, nextLevel, completionMessage, showPreview = false }) {
+export default function App({ levelNumber, levelLabel,levelTasks = defaultTasks, toolbox = defaultToolbox, blockDefinitions = defaultBlocks, generators = defaultGenerators, nextLevel, completionMessage, showPreview = false }) {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [json, setJson] = useState(null);
@@ -70,6 +72,7 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
   const [completedTasks, setCompletedTasks] = useState(() => new Set());
   const [completionPopupOpen, setCompletionPopupOpen] = useState(false);
   const [finalScreenOpen, setFinalScreenOpen] = useState(false);
+  const [reward, setReward] = useState(null);
   const previewRef = useRef(null);
 
   const blockCount = countBlocks(json);
@@ -80,26 +83,30 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
     setResult({ ...execution, at: time() });
     if (!execution.error) {
       const taskOutput = showPreview ? readPreviewOutput(previewRef.current) : execution.output;
-      setCompletedTasks((current) => {
-        const next = new Set(current);
-        levelTasks.forEach((task) => {
-          if (
-            outputsMatch(taskOutput, task.expectedOutput) &&
-            containsRequiredBlocks(json, task.requiredBlocks)
-          ) {
-            next.add(task.id);
-          }
-        });
-        return next;
-      });
+      const solved = levelTasks.filter(
+        (task) =>
+          outputsMatch(taskOutput, task.expectedOutput) &&
+          containsRequiredBlocks(json, task.requiredBlocks),
+      );
+      setCompletedTasks((current) => new Set([...current, ...solved.map((task) => task.id)]));
+
+      // Kovanci: vsaka naloga se izplača samo enkrat (shranjeno v localStorage).
+      const gained = solved.reduce((sum, task) => sum + awardTask(`${levelNumber}:${task.id}`), 0);
+      if (gained > 0) setReward({ coins: gained, id: Date.now() });
     }
     if (showPreview) setTab("preview");
     setConsoleOpen(Boolean(execution.error));
     console.log("Run at", time(), "code:", code);
-  }, [code, json, levelTasks, showPreview]);
+  }, [code, json, levelTasks, levelNumber, showPreview]);
 
   useEffect(() => {
-    if (completedTasks.size === levelTasks.length) {
+    if (!reward) return;
+    const timer = setTimeout(() => setReward(null), 2800);
+    return () => clearTimeout(timer);
+  }, [reward]);
+
+  useEffect(() => {
+    if (levelTasks.length > 0 && completedTasks.size === levelTasks.length) {
       setCompletionPopupOpen(true);
     }
   }, [completedTasks, levelTasks.length]);
@@ -149,8 +156,18 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
   return (
     <div className="app">
       <header className="topbar" style={{ "justifyContent": "right" }}>
-        {levelNumber && <span className="level-label">Level {levelNumber}</span>}
+        <Link to="/" className="btn small" style={{ marginRight: "auto" }}>
+          🏠 Domov
+        </Link>
+        {levelLabel ? (
+          <span className="level-label" style={{ marginRight: "auto" }}>
+            {levelLabel}
+          </span>
+        ) : (
+          levelNumber && <span className="level-label">Level {levelNumber}</span>
+        )}
         <div className="topbar-actions">
+          <CoinBadge />
           <button type="button" className="btn primary" onClick={handleRun}>
             <span aria-hidden="true">▶</span> Zaženi
             <kbd>Ctrl ↵</kbd>
@@ -228,9 +245,11 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
             <button type="button" role="tab" aria-selected={tab === "js"} className={tab === "js" ? "on" : ""} onClick={() => setTab("js")}>
               JavaScript
             </button>
-            <button type="button" role="tab" aria-selected={tab === "tasks"} className={tab === "tasks" ? "on" : ""} onClick={() => setTab("tasks")}>
-              Naloge
-            </button>
+            {levelTasks.length > 0 && (
+              <button type="button" role="tab" aria-selected={tab === "tasks"} className={tab === "tasks" ? "on" : ""} onClick={() => setTab("tasks")}>
+                Naloge
+              </button>
+            )}
           </div>
 
           <div className="panel">
@@ -300,6 +319,11 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
           </footer>
         </aside>
       </main>
+      {reward && (
+        <div className="reward-toast" key={reward.id} role="status">
+          +{reward.coins} 🪙
+        </div>
+      )}
       {completionPopupOpen && (
         <div className="completion-modal-backdrop" role="presentation">
           <section className="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completion-title">
