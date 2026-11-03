@@ -58,11 +58,21 @@ const dark = Blockly.Theme.defineTheme("blokko-dark", {
 
 export const themeFor = (isDark) => (isDark ? dark : light);
 
+const START_SCALE = 1;
+
+// workaround for keeping flyout scale consistent when zooming
+class FixedScaleFlyout extends Blockly.VerticalFlyout {
+    getFlyoutScale() {
+        return START_SCALE;
+    }
+}
+
 export const WORKSPACE_OPTIONS = {
+    plugins: { flyoutsVerticalToolbox: FixedScaleFlyout },
     renderer: "zelos", // Renderer z bolj zaobljenimi robovi, ki je lepši na zaslonih visoke ločljivosti
     sounds: false,
     trashcan: true,
     scrollbars: true,
     grid: { spacing: 26, length: 3, colour: "#9aa9de", snap: true },
-    zoom: { controls: true, wheel: true, startScale: 1.1, minScale: 0.5, maxScale: 2 },
+    zoom: { controls: true, wheel: true, startScale: START_SCALE, minScale: 0.5, maxScale: 2 },
 };
