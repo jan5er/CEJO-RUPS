@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { BlockEditor } from "./BlockEditor";
 import { run } from "../interpreter";
 //import { TOOLBOX } from "./toolbox";
@@ -30,8 +30,10 @@ export function HTMLBlockEditor({toolbox}) {
   const [copied, setCopied] = useState(false);
 
   const blockCount = countBlocks(json);
+  const outputRef = useRef(null);
 
   const handleRun = useCallback(() => {
+    outputRef.current.replaceChildren();
     setResult({ ...run(code), at: time() });
     setConsoleOpen(true);
     console.log("Run at", time(), "code:", code);
@@ -143,7 +145,7 @@ export function HTMLBlockEditor({toolbox}) {
           <div className="panel">
             <div style={{display: tab === "html" ? 'block' : 'none', width: '100%'}}>
                 <p className="hint">Prikaz zgrajene spletne strani.</p>
-                <div id="output"></div>
+                <div id="output" ref={outputRef}></div>
             </div>
             
             {tab === "js" ? (
