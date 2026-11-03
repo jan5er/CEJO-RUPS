@@ -1,6 +1,7 @@
 import App from "../App";
-import { blocksLevel2, forBlockLevel2 } from "./utils/generator";
-import { TOOLBOX as toolboxLevel2 } from "./utils/toolbox";
+import { blocks as blocksLevel2 } from "../blocks";
+import { forBlock as forBlockLevel2 } from "../generator";
+import { TOOLBOX as toolboxLevel2 } from "../toolbox";
 import { tasksLevel2 } from "./tasks";
 
 export default function Level2() {

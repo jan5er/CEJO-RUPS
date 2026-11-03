@@ -20,6 +20,10 @@ function countBlocks(json) {
   return n;
 }
 
+function outputsMatch(actual, expected) {
+  return actual.length === expected.length && actual.every((line, index) => line === expected[index]);
+}
+
 const time = () => new Date().toLocaleTimeString("sl-SI");
 
 function readPreviewOutput(element) {
