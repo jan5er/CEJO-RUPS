@@ -94,7 +94,7 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       });
     }
     if (showPreview) setTab("preview");
-    setConsoleOpen(true);
+    setConsoleOpen(Boolean(execution.error));
     console.log("Run at", time(), "code:", code);
   }, [code, json, levelTasks, showPreview]);
 
@@ -151,9 +151,6 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       <header className="topbar" style={{ "justifyContent": "right" }}>
         {levelNumber && <span className="level-label">Level {levelNumber}</span>}
         <div className="topbar-actions">
-          <button type="button" className="btn" onClick={() => setConsoleOpen((o) => !o)} aria-pressed={consoleOpen}>
-            Konzola
-          </button>
           <button type="button" className="btn primary" onClick={handleRun}>
             <span aria-hidden="true">▶</span> Zaženi
             <kbd>Ctrl ↵</kbd>
@@ -162,7 +159,7 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       </header>
 
       <main className="main">
-        <section className="stage" aria-label="Blocks and Tasks workspace">
+        <section className="stage" aria-label="Bloki in naloge">
           <div className="workspace-grid">
             <section className="workspace-pane blocks-pane" aria-labelledby="blocks-heading">
               <div className="workspace-pane-head">
@@ -218,42 +215,6 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
               </div>
             </section>
 
-            <section className="workspace-pane tasks-pane" aria-labelledby="tasks-heading">
-              <div className="workspace-pane-head">
-                <h2 id="tasks-heading">Tasks</h2>
-                <span className="task-progress">{completedTasks.size}/{levelTasks.length}</span>
-              </div>
-              <div className="task-list">
-                {levelTasks.map((task) => {
-                  const completed = completedTasks.has(task.id);
-
-                  return (
-                    <article className={`task-item${completed ? " completed" : ""}`} key={task.id}>
-                      <div className="task-heading">
-                        <h3>{task.title}</h3>
-                        {completed && <span className="task-status">✓ Completed</span>}
-                      </div>
-                      <p>{task.description}</p>
-                      {task.theory && (
-                        <div className="task-theory">
-                          <strong>Teorija:</strong> {task.theory}
-                        </div>
-                      )}
-                      {task.requiredBlocks?.length > 0 && (
-                        <div className="task-requirements">
-                          <strong>Obvezni bloki:</strong>{" "}
-                          {task.requiredBlocks.join(", ")}
-                        </div>
-                      )}
-                      <div className="expected-output">
-                        <span>Expected output</span>
-                        <code>{task.expectedOutput.join("\n")}</code>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
           </div>
         </section>
 
@@ -267,8 +228,8 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
             <button type="button" role="tab" aria-selected={tab === "js"} className={tab === "js" ? "on" : ""} onClick={() => setTab("js")}>
               JavaScript
             </button>
-            <button type="button" role="tab" aria-selected={tab === "json"} className={tab === "json" ? "on" : ""} onClick={() => setTab("json")}>
-              JSON
+            <button type="button" role="tab" aria-selected={tab === "tasks"} className={tab === "tasks" ? "on" : ""} onClick={() => setTab("tasks")}>
+              Naloge
             </button>
           </div>
 
@@ -287,11 +248,43 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
                   {copied ? "Kopirano ✓" : "Kopiraj kodo"}
                 </button>
               </>
-            ) : tab === "json" ? (
-              <>
-                <p className="hint">Serializirana oblika blokov, iz katere interpreter izvede program.</p>
-                <pre className="code">{json ? JSON.stringify(json, null, 2) : "—"}</pre>
-              </>
+            ) : tab === "tasks" ? (
+              <div className="tasks-panel">
+                <div className="tasks-panel-head">
+                  <h2>Naloge</h2>
+                  <span className="task-progress">{completedTasks.size}/{levelTasks.length}</span>
+                </div>
+                <div className="task-list">
+                  {levelTasks.map((task) => {
+                    const completed = completedTasks.has(task.id);
+
+                    return (
+                      <article className={`task-item${completed ? " completed" : ""}`} key={task.id}>
+                        <div className="task-heading">
+                          <h3>{task.title}</h3>
+                          {completed && <span className="task-status">✓ Opravljeno</span>}
+                        </div>
+                        <p>{task.description}</p>
+                        {task.theory && (
+                          <div className="task-theory">
+                            <strong>Teorija:</strong> {task.theory}
+                          </div>
+                        )}
+                        {task.requiredBlocks?.length > 0 && (
+                          <div className="task-requirements">
+                            <strong>Obvezni bloki:</strong>{" "}
+                            {task.requiredBlocks.join(", ")}
+                          </div>
+                        )}
+                        <div className="expected-output">
+                          <span>Expected output</span>
+                          <code>{task.expectedOutput.join("\n")}</code>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
             ) : null}
           </div>
 

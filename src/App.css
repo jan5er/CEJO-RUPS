@@ -237,7 +237,7 @@ kbd {
 
 .workspace-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  grid-template-columns: minmax(0, 1fr);
   height: 100%;
   min-height: 0;
 }
@@ -282,11 +282,6 @@ kbd {
   z-index: 0;
 }
 
-.tasks-pane {
-  overflow: auto;
-  background: var(--surface-2);
-}
-
 .task-progress {
   color: var(--mut);
   font-size: 12px;
@@ -298,6 +293,23 @@ kbd {
   align-content: start;
   gap: 12px;
   padding: 16px;
+}
+
+.tasks-panel {
+  width: 100%;
+}
+
+.tasks-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px 4px;
+}
+
+.tasks-panel-head h2 {
+  margin: 0;
+  font-size: 15px;
 }
 
 .task-item {
