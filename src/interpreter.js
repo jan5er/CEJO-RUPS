@@ -1,13 +1,15 @@
 export function run(code) {
-    const output = [];
-    const fakeConsole = { log: (...args) => output.push(args.map(String).join(" ")) };
+  const output = [];
+  const fakeConsole = {
+    log: (...args) => output.push(args.map(String).join(" ")),
+  };
 
-    try {
-        new Function("console", code)(fakeConsole);
-        return { output, error: null };
-    } catch (e) {
-        return { output, error: e instanceof Error ? e.message : String(e) };
-    }
+  try {
+    new Function("console", code)(fakeConsole);
+    return { output, error: null };
+  } catch (e) {
+    return { output, error: e instanceof Error ? e.message : String(e) };
+  }
 }
 
 /* eval

@@ -1,4 +1,3 @@
-
 import * as Blockly from "blockly/core";
 
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
@@ -9,16 +8,16 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       {
         type: "input_value",
         name: "QUESTION",
-        check: "String"
+        check: "String",
       },
       {
         type: "input_value",
         name: "VARIABLE",
-      }
+      },
     ],
     previousStatement: null,
     nextStatement: null,
     colour: 280,
-    tooltip: "Uporabniku postavi vprašanje in shrani odgovor v spremenljivko."
-  }
+    tooltip: "Uporabniku postavi vprašanje in shrani odgovor v spremenljivko.",
+  },
 ]);

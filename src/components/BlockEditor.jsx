@@ -3,13 +3,11 @@ import "blockly/blocks";
 import { javascriptGenerator } from "blockly/javascript";
 import * as Sl from "blockly/msg/sl";
 import { useEffect, useRef } from "react";
-import { WORKSPACE_OPTIONS, themeFor } from "../BlocklyTheme";
+import { themeFor, WORKSPACE_OPTIONS } from "../BlocklyTheme";
 
 //import { blocks } from "../blocks.js";
 //import { forBlock } from "../generator";
 import { load, save } from "../serialization";
-
-
 
 Blockly.setLocale(Sl); // Nastavimo jezik blokov/teksta na slovenščino
 
@@ -25,53 +23,63 @@ Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2";
  * @param {(ws: Blockly.WorkspaceSvg) => void} [props.onWorkspaceChange]
  * @param {string} [props.className]
  */
-export function BlockEditor({ toolbox, blocks = [], forBlock = {}, initialJson, onJsonChange, onCodeChange, onWorkspaceChange, className }) {
-    const containerRef = useRef(null);
-    const cb = useRef({});
-    cb.current = { onJsonChange, onCodeChange, onWorkspaceChange };
-    const initialRef = useRef(initialJson);
+export function BlockEditor({
+  toolbox,
+  blocks = [],
+  forBlock = {},
+  initialJson,
+  onJsonChange,
+  onCodeChange,
+  onWorkspaceChange,
+  className,
+}) {
+  const containerRef = useRef(null);
+  const cb = useRef({});
+  cb.current = { onJsonChange, onCodeChange, onWorkspaceChange };
+  const initialRef = useRef(initialJson);
 
-    useEffect(() => {
-        if (blocks.length) Blockly.common.defineBlocks(blocks);
-        Object.assign(javascriptGenerator.forBlock, forBlock);
+  useEffect(() => {
+    if (blocks.length) Blockly.common.defineBlocks(blocks);
+    Object.assign(javascriptGenerator.forBlock, forBlock);
 
-        const scheme = window.matchMedia("(prefers-color-scheme: dark)");
-        const ws = Blockly.inject(containerRef.current, {
-            ...WORKSPACE_OPTIONS,
-            theme: themeFor(scheme.matches),
-            toolbox,
-        });
+    const scheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const ws = Blockly.inject(containerRef.current, {
+      ...WORKSPACE_OPTIONS,
+      theme: themeFor(scheme.matches),
+      toolbox,
+    });
 
-        if (initialRef.current) Blockly.serialization.workspaces.load(initialRef.current, ws);
+    if (initialRef.current)
+      Blockly.serialization.workspaces.load(initialRef.current, ws);
 
-        const emit = () => {
-            cb.current.onWorkspaceChange?.(ws);
-            cb.current.onCodeChange?.(javascriptGenerator.workspaceToCode(ws));
-            cb.current.onJsonChange?.(Blockly.serialization.workspaces.save(ws));
-        };
+    const emit = () => {
+      cb.current.onWorkspaceChange?.(ws);
+      cb.current.onCodeChange?.(javascriptGenerator.workspaceToCode(ws));
+      cb.current.onJsonChange?.(Blockly.serialization.workspaces.save(ws));
+    };
 
-        load(ws); // namesto initialJson
+    load(ws); // namesto initialJson
 
-        ws.addChangeListener((e) => {
-            if (e.isUiEvent) return;
-            save(ws);
-            emit();
-        });
+    ws.addChangeListener((e) => {
+      if (e.isUiEvent) return;
+      save(ws);
+      emit();
+    });
 
-        const onScheme = (e) => ws.setTheme(themeFor(e.matches));
-        scheme.addEventListener("change", onScheme);
+    const onScheme = (e) => ws.setTheme(themeFor(e.matches));
+    scheme.addEventListener("change", onScheme);
 
-        const ro = new ResizeObserver(() => Blockly.svgResize(ws));
-        ro.observe(containerRef.current);
+    const ro = new ResizeObserver(() => Blockly.svgResize(ws));
+    ro.observe(containerRef.current);
 
-        emit();
+    emit();
 
-        return () => {
-            scheme.removeEventListener("change", onScheme);
-            ro.disconnect();
-            ws.dispose();
-        };
-    }, [blocks, forBlock, toolbox]);
+    return () => {
+      scheme.removeEventListener("change", onScheme);
+      ro.disconnect();
+      ws.dispose();
+    };
+  }, [blocks, forBlock, toolbox]);
 
-    return <div ref={containerRef} className={className} />;
+  return <div ref={containerRef} className={className} />;
 }

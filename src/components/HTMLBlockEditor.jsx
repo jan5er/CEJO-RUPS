@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { BlockEditor } from "./BlockEditor";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { run } from "../interpreter";
+import { BlockEditor } from "./BlockEditor";
 //import { TOOLBOX } from "./toolbox";
 import "./HTMLBlockEditor.css";
+
 //import { blocks } from "./blocks.js";
 //import { forBlock } from "./generator";
 
@@ -21,7 +22,7 @@ function countBlocks(json) {
 
 const time = () => new Date().toLocaleTimeString("sl-SI");
 
-export function HTMLBlockEditor({toolbox}) {
+export function HTMLBlockEditor({ toolbox }) {
   const [code, setCode] = useState("");
   const [json, setJson] = useState(null);
   const [result, setResult] = useState(null);
@@ -57,19 +58,21 @@ export function HTMLBlockEditor({toolbox}) {
       await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-
-    }
+    } catch {}
   };
 
   const failed = Boolean(result?.error);
 
   return (
     <div className="html-block-editor">
-      <header className="topbar" style={{ "justifyContent": "right" }}>
-
+      <header className="topbar" style={{ justifyContent: "right" }}>
         <div className="topbar-actions">
-          <button type="button" className="btn" onClick={() => setConsoleOpen((o) => !o)} aria-pressed={consoleOpen}>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => setConsoleOpen((o) => !o)}
+            aria-pressed={consoleOpen}
+          >
             Konzola
           </button>
           <button type="button" className="btn primary" onClick={handleRun}>
@@ -81,7 +84,12 @@ export function HTMLBlockEditor({toolbox}) {
 
       <main className="main">
         <section className="stage" aria-label="Delovni prostor z bloki">
-          <BlockEditor className="editor" toolbox={toolbox} onCodeChange={setCode} onJsonChange={setJson} />
+          <BlockEditor
+            className="editor"
+            toolbox={toolbox}
+            onCodeChange={setCode}
+            onJsonChange={setJson}
+          />
 
           {blockCount === 0 && (
             <div className="empty" aria-hidden="true">
@@ -89,7 +97,11 @@ export function HTMLBlockEditor({toolbox}) {
               <p>Povleci bloke iz menija na levi in jih zloži sem</p>
             </div>
           )}
-          <div className={`drawer${consoleOpen ? " open" : ""}`} role="region" aria-label="Konzola" aria-hidden={!consoleOpen}>
+          <section
+            className={`drawer${consoleOpen ? " open" : ""}`}
+            aria-label="Konzola"
+            aria-hidden={!consoleOpen}
+          >
             <div className="drawer-head">
               <span className="drawer-title">Konzola</span>
               {result && (
@@ -98,19 +110,35 @@ export function HTMLBlockEditor({toolbox}) {
                 </span>
               )}
               <span className="spacer" />
-              <button type="button" className="icon-btn" onClick={() => setResult(null)} title="Počisti">
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setResult(null)}
+                title="Počisti"
+              >
                 Počisti
               </button>
-              <button type="button" className="icon-btn" onClick={() => setConsoleOpen(false)} aria-label="Zapri konzolo">
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setConsoleOpen(false)}
+                aria-label="Zapri konzolo"
+              >
                 ✕
               </button>
             </div>
 
             <div className="drawer-body">
-              {!result && <p className="muted">Pritisni »Zaženi«, da se izpis prikaže tukaj.</p>}
+              {!result && (
+                <p className="muted">
+                  Pritisni »Zaženi«, da se izpis prikaže tukaj.
+                </p>
+              )}
               {result && (
                 <>
-                  {result.output.length === 0 && !failed && <p className="muted">Program ni nič izpisal.</p>}
+                  {result.output.length === 0 && !failed && (
+                    <p className="muted">Program ni nič izpisal.</p>
+                  )}
                   {result.output.map((line, i) => (
                     <div className="line" key={i}>
                       <span className="ln">{i + 1}</span>
@@ -126,43 +154,81 @@ export function HTMLBlockEditor({toolbox}) {
                 </>
               )}
             </div>
-          </div>
+          </section>
         </section>
 
         <aside className="side">
           <div className="tabs" role="tablist">
-            <button type="button" role="tab" aria-selected={tab === "html"} className={tab === "html" ? "on" : ""} onClick={() => setTab("html")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "html"}
+              className={tab === "html" ? "on" : ""}
+              onClick={() => setTab("html")}
+            >
               Prikaz
             </button>
-            <button type="button" role="tab" aria-selected={tab === "js"} className={tab === "js" ? "on" : ""} onClick={() => setTab("js")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "js"}
+              className={tab === "js" ? "on" : ""}
+              onClick={() => setTab("js")}
+            >
               JavaScript
             </button>
-            <button type="button" role="tab" aria-selected={tab === "json"} className={tab === "json" ? "on" : ""} onClick={() => setTab("json")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "json"}
+              className={tab === "json" ? "on" : ""}
+              onClick={() => setTab("json")}
+            >
               JSON
             </button>
           </div>
 
           <div className="panel">
-            <div style={{display: tab === "html" ? 'block' : 'none', width: '100%'}}>
-                <p className="hint">Prikaz zgrajene spletne strani.</p>
-                <div id="output" ref={outputRef}></div>
+            <div
+              style={{
+                display: tab === "html" ? "block" : "none",
+                width: "100%",
+              }}
+            >
+              <p className="hint">Prikaz zgrajene spletne strani.</p>
+              <div id="output" ref={outputRef}></div>
             </div>
-            
+
             {tab === "js" ? (
               <>
-                <p className="hint">Tako bi bili tvoji bloki videti kot prava koda!</p>
-                <pre className="code">{code.trim() || "// Povleci bloke v delovni prostor …"}</pre>
-                <button type="button" className="btn small" onClick={copy} disabled={!code.trim()}>
+                <p className="hint">
+                  Tako bi bili tvoji bloki videti kot prava koda!
+                </p>
+                <pre className="code">
+                  {code.trim() || "// Povleci bloke v delovni prostor …"}
+                </pre>
+                <button
+                  type="button"
+                  className="btn small"
+                  onClick={copy}
+                  disabled={!code.trim()}
+                >
                   {copied ? "Kopirano ✓" : "Kopiraj kodo"}
                 </button>
               </>
-            ) : tab === "json" ?
-             (
+            ) : tab === "json" ? (
               <>
-                <p className="hint">Serializirana oblika blokov, iz katere interpreter izvede program.</p>
-                <pre className="code">{json ? JSON.stringify(json, null, 2) : "—"}</pre>
+                <p className="hint">
+                  Serializirana oblika blokov, iz katere interpreter izvede
+                  program.
+                </p>
+                <pre className="code">
+                  {json ? JSON.stringify(json, null, 2) : "—"}
+                </pre>
               </>
-            ) : <></>}
+            ) : (
+              {}
+            )}
           </div>
 
           <footer className="stats">

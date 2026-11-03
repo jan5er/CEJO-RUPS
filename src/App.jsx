@@ -21,7 +21,10 @@ function countBlocks(json) {
 }
 
 function outputsMatch(actual, expected) {
-  return actual.length === expected.length && actual.every((line, index) => line === expected[index]);
+  return (
+    actual.length === expected.length
+    && actual.every((line, index) => line === expected[index])
+  );
 }
 
 function containsRequiredBlocks(json, requiredBlocks = []) {
@@ -59,7 +62,16 @@ function readPreviewOutput(element) {
   return lines;
 }
 
-export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = defaultToolbox, blockDefinitions = defaultBlocks, generators = defaultGenerators, nextLevel, completionMessage, showPreview = false }) {
+export default function App({
+  levelNumber,
+  levelTasks = defaultTasks,
+  toolbox = defaultToolbox,
+  blockDefinitions = defaultBlocks,
+  generators = defaultGenerators,
+  nextLevel,
+  completionMessage,
+  showPreview = false,
+}) {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [json, setJson] = useState(null);
@@ -79,13 +91,15 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
     const execution = run(code);
     setResult({ ...execution, at: time() });
     if (!execution.error) {
-      const taskOutput = showPreview ? readPreviewOutput(previewRef.current) : execution.output;
+      const taskOutput = showPreview
+        ? readPreviewOutput(previewRef.current)
+        : execution.output;
       setCompletedTasks((current) => {
         const next = new Set(current);
         levelTasks.forEach((task) => {
           if (
-            outputsMatch(taskOutput, task.expectedOutput) &&
-            containsRequiredBlocks(json, task.requiredBlocks)
+            outputsMatch(taskOutput, task.expectedOutput)
+            && containsRequiredBlocks(json, task.requiredBlocks)
           ) {
             next.add(task.id);
           }
@@ -122,9 +136,7 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       await navigator.clipboard.writeText(code);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-
-    }
+    } catch {}
   };
 
   const failed = Boolean(result?.error);
@@ -148,8 +160,10 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
 
   return (
     <div className="app">
-      <header className="topbar" style={{ "justifyContent": "right" }}>
-        {levelNumber && <span className="level-label">Level {levelNumber}</span>}
+      <header className="topbar" style={{ justifyContent: "right" }}>
+        {levelNumber && (
+          <span className="level-label">Level {levelNumber}</span>
+        )}
         <div className="topbar-actions">
           <button type="button" className="btn primary" onClick={handleRun}>
             <span aria-hidden="true">▶</span> Zaženi
@@ -161,12 +175,22 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       <main className="main">
         <section className="stage" aria-label="Bloki in naloge">
           <div className="workspace-grid">
-            <section className="workspace-pane blocks-pane" aria-labelledby="blocks-heading">
+            <section
+              className="workspace-pane blocks-pane"
+              aria-labelledby="blocks-heading"
+            >
               <div className="workspace-pane-head">
                 <h2 id="blocks-heading">Blocks</h2>
               </div>
               <div className="blocks-canvas">
-                <BlockEditor className="editor" toolbox={toolbox} blocks={blockDefinitions} forBlock={generators} onCodeChange={setCode} onJsonChange={setJson} />
+                <BlockEditor
+                  className="editor"
+                  toolbox={toolbox}
+                  blocks={blockDefinitions}
+                  forBlock={generators}
+                  onCodeChange={setCode}
+                  onJsonChange={setJson}
+                />
 
                 {blockCount === 0 && (
                   <div className="empty" aria-hidden="true">
@@ -174,7 +198,11 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
                     <p>Povleci bloke iz menija na levi in jih zloži sem</p>
                   </div>
                 )}
-                <div className={`drawer${consoleOpen ? " open" : ""}`} role="region" aria-label="Konzola" aria-hidden={!consoleOpen}>
+                <section
+                  className={`drawer${consoleOpen ? " open" : ""}`}
+                  aria-label="Konzola"
+                  aria-hidden={!consoleOpen}
+                >
                   <div className="drawer-head">
                     <span className="drawer-title">Konzola</span>
                     {result && (
@@ -183,19 +211,35 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
                       </span>
                     )}
                     <span className="spacer" />
-                    <button type="button" className="icon-btn" onClick={() => setResult(null)} title="Počisti">
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      onClick={() => setResult(null)}
+                      title="Počisti"
+                    >
                       Počisti
                     </button>
-                    <button type="button" className="icon-btn" onClick={() => setConsoleOpen(false)} aria-label="Zapri konzolo">
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      onClick={() => setConsoleOpen(false)}
+                      aria-label="Zapri konzolo"
+                    >
                       ✕
                     </button>
                   </div>
 
                   <div className="drawer-body">
-                    {!result && <p className="muted">Pritisni »Zaženi«, da se izpis prikaže tukaj.</p>}
+                    {!result && (
+                      <p className="muted">
+                        Pritisni »Zaženi«, da se izpis prikaže tukaj.
+                      </p>
+                    )}
                     {result && (
                       <>
-                        {result.output.length === 0 && !failed && <p className="muted">Program ni nič izpisal.</p>}
+                        {result.output.length === 0 && !failed && (
+                          <p className="muted">Program ni nič izpisal.</p>
+                        )}
                         {result.output.map((line, i) => (
                           <div className="line" key={i}>
                             <span className="ln">{i + 1}</span>
@@ -211,40 +255,69 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
                       </>
                     )}
                   </div>
-                </div>
+                </section>
               </div>
             </section>
-
           </div>
         </section>
 
         <aside className="side">
           <div className="tabs" role="tablist">
             {showPreview && (
-              <button type="button" role="tab" aria-selected={tab === "preview"} className={tab === "preview" ? "on" : ""} onClick={() => setTab("preview")}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === "preview"}
+                className={tab === "preview" ? "on" : ""}
+                onClick={() => setTab("preview")}
+              >
                 Prikaz
               </button>
             )}
-            <button type="button" role="tab" aria-selected={tab === "js"} className={tab === "js" ? "on" : ""} onClick={() => setTab("js")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "js"}
+              className={tab === "js" ? "on" : ""}
+              onClick={() => setTab("js")}
+            >
               JavaScript
             </button>
-            <button type="button" role="tab" aria-selected={tab === "tasks"} className={tab === "tasks" ? "on" : ""} onClick={() => setTab("tasks")}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "tasks"}
+              className={tab === "tasks" ? "on" : ""}
+              onClick={() => setTab("tasks")}
+            >
               Naloge
             </button>
           </div>
 
           <div className="panel">
             {showPreview && (
-              <div className={`preview-panel${tab === "preview" ? " active" : ""}`} aria-hidden={tab !== "preview"}>
+              <div
+                className={`preview-panel${tab === "preview" ? " active" : ""}`}
+                aria-hidden={tab !== "preview"}
+              >
                 <p className="hint">Prikaz zgrajene spletne strani.</p>
                 <div id="output" ref={previewRef} className="preview-output" />
               </div>
             )}
             {tab === "js" ? (
               <>
-                <p className="hint">Tako bi bili tvoji bloki videti kot prava koda!</p>
-                <pre className="code">{code.trim() || "// Povleci bloke v delovni prostor …"}</pre>
-                <button type="button" className="btn small" onClick={copy} disabled={!code.trim()}>
+                <p className="hint">
+                  Tako bi bili tvoji bloki videti kot prava koda!
+                </p>
+                <pre className="code">
+                  {code.trim() || "// Povleci bloke v delovni prostor …"}
+                </pre>
+                <button
+                  type="button"
+                  className="btn small"
+                  onClick={copy}
+                  disabled={!code.trim()}
+                >
                   {copied ? "Kopirano ✓" : "Kopiraj kodo"}
                 </button>
               </>
@@ -252,17 +325,24 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
               <div className="tasks-panel">
                 <div className="tasks-panel-head">
                   <h2>Naloge</h2>
-                  <span className="task-progress">{completedTasks.size}/{levelTasks.length}</span>
+                  <span className="task-progress">
+                    {completedTasks.size}/{levelTasks.length}
+                  </span>
                 </div>
                 <div className="task-list">
                   {levelTasks.map((task) => {
                     const completed = completedTasks.has(task.id);
 
                     return (
-                      <article className={`task-item${completed ? " completed" : ""}`} key={task.id}>
+                      <article
+                        className={`task-item${completed ? " completed" : ""}`}
+                        key={task.id}
+                      >
                         <div className="task-heading">
                           <h3>{task.title}</h3>
-                          {completed && <span className="task-status">✓ Opravljeno</span>}
+                          {completed && (
+                            <span className="task-status">✓ Opravljeno</span>
+                          )}
                         </div>
                         <p>{task.description}</p>
                         {task.theory && (
@@ -302,11 +382,22 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       </main>
       {completionPopupOpen && (
         <div className="completion-modal-backdrop" role="presentation">
-          <section className="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completion-title">
-            <div className="completion-icon" aria-hidden="true">✓</div>
+          <section
+            className="completion-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="completion-title"
+          >
+            <div className="completion-icon" aria-hidden="true">
+              ✓
+            </div>
             <h2 id="completion-title">Level je bil uspešno opravljen</h2>
             <p>Odlično delo! Vse naloge na tem levelu so zaključene.</p>
-            <button type="button" className="btn primary" onClick={handleContinue}>
+            <button
+              type="button"
+              className="btn primary"
+              onClick={handleContinue}
+            >
               Nadaljuj
             </button>
           </section>

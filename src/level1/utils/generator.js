@@ -1,21 +1,21 @@
-import * as Blockly from 'blockly/core'; 
-import { headingLevel1JSON, initGenHeading } from "../blocks/Heading";
-import { inputLevel1JSON, initGenInput } from "../blocks/Input";
-import { simpleTextLevel1JSON, initGenSimpleText } from "../blocks/SimpleText";
-import { containerLevel1JSON, initGenContainer } from "../blocks/Container";
-import { checkboxLevel1JSON, initGenCombobox } from "../blocks/Checkbox";
-import { selectLevel1JSON, initGenSelect } from "../blocks/Select";
-import { buttonLevel1JSON, initGenButton } from "../blocks/Button";
+import * as Blockly from "blockly/core";
 import { javascriptGenerator } from "blockly/javascript";
+import { buttonLevel1JSON, initGenButton } from "../blocks/Button";
+import { checkboxLevel1JSON, initGenCombobox } from "../blocks/Checkbox";
+import { containerLevel1JSON, initGenContainer } from "../blocks/Container";
+import { headingLevel1JSON, initGenHeading } from "../blocks/Heading";
+import { initGenInput, inputLevel1JSON } from "../blocks/Input";
+import { initGenSelect, selectLevel1JSON } from "../blocks/Select";
+import { initGenSimpleText, simpleTextLevel1JSON } from "../blocks/SimpleText";
 
 export const blocksLevel1 = Blockly.common.createBlockDefinitionsFromJsonArray([
-    headingLevel1JSON,
-    inputLevel1JSON,
-    simpleTextLevel1JSON,
-    containerLevel1JSON,
-    checkboxLevel1JSON,
-    selectLevel1JSON,
-    buttonLevel1JSON,
+  headingLevel1JSON,
+  inputLevel1JSON,
+  simpleTextLevel1JSON,
+  containerLevel1JSON,
+  checkboxLevel1JSON,
+  selectLevel1JSON,
+  buttonLevel1JSON,
 ]);
 
 //Object that saves generetors for blocks

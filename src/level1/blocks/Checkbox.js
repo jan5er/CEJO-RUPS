@@ -1,32 +1,32 @@
-import { Order } from 'blockly/javascript';
+import { Order } from "blockly/javascript";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing checkbox element for level 1
 export const checkboxLevel1JSON = {
-  "type": "checkbox_level1",
-  "tooltip": "Potrditveno polje, ki shrani drži/ne drži v spremenljivko",
-  "helpUrl": "",
-  "message0": "Potrditveno polje | Oznaka: %1",
-  "args0": [
+  type: "checkbox_level1",
+  tooltip: "Potrditveno polje, ki shrani drži/ne drži v spremenljivko",
+  helpUrl: "",
+  message0: "Potrditveno polje | Oznaka: %1",
+  args0: [
     {
-      "type": "input_value",
-      "name": "LABEL_TEXT",
-      "check": "String"
+      type: "input_value",
+      name: "LABEL_TEXT",
+      check: "String",
     },
   ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": "#da7d12"
+  previousStatement: null,
+  nextStatement: null,
+  colour: "#da7d12",
 };
 
 //Generator for checkbox element
 export const initGenCombobox = () => {
-  forBlockLevel1['checkbox_level1'] = (block, generator) => {
+  forBlockLevel1.checkbox_level1 = (block, generator) => {
     const rootBlock = block.getRootBlock();
-    const labelText = generator.valueToCode(block, 'LABEL_TEXT', Order.ATOMIC);
+    const labelText = generator.valueToCode(block, "LABEL_TEXT", Order.ATOMIC);
 
     const checkboxGenCode = generator.provideFunction_(
-      'checkboxGenCode',
+      "checkboxGenCode",
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerId) {
                 const containerDiv = document.getElementById(containerId) || document.getElementById('output');
                 const name = "NamedCheckbox" + Math.floor(Math.random() * 100000);
@@ -40,11 +40,11 @@ export const initGenCombobox = () => {
                 const inputEl = document.createElement('input');
                 inputEl.type = "checkbox";
                 inputEl.name = name;
-                containerDiv.appendChild(inputEl); 
+                containerDiv.appendChild(inputEl);
         }`,
     );
     // Generate the function call for this block.
     const code = `${checkboxGenCode}(${labelText},"${rootBlock.data}");\n`;
     return code;
   };
-}
+};
