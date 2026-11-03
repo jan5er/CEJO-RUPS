@@ -24,6 +24,21 @@ function outputsMatch(actual, expected) {
   return actual.length === expected.length && actual.every((line, index) => line === expected[index]);
 }
 
+function containsRequiredBlocks(json, requiredBlocks = []) {
+  if (requiredBlocks.length === 0) return true;
+
+  const found = new Set();
+  const visit = (block) => {
+    if (!block) return;
+    if (block.type) found.add(block.type);
+    for (const input of Object.values(block.inputs ?? {})) visit(input.block);
+    visit(block.next?.block);
+  };
+
+  for (const block of json?.blocks?.blocks ?? []) visit(block);
+  return requiredBlocks.every((type) => found.has(type));
+}
+
 const time = () => new Date().toLocaleTimeString("sl-SI");
 
 function readPreviewOutput(element) {
@@ -53,6 +68,8 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
   const [tab, setTab] = useState("js");
   const [copied, setCopied] = useState(false);
   const [completedTasks, setCompletedTasks] = useState(() => new Set());
+  const [completionPopupOpen, setCompletionPopupOpen] = useState(false);
+  const [finalScreenOpen, setFinalScreenOpen] = useState(false);
   const previewRef = useRef(null);
 
   const blockCount = countBlocks(json);
@@ -66,7 +83,12 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
       setCompletedTasks((current) => {
         const next = new Set(current);
         levelTasks.forEach((task) => {
-          if (outputsMatch(taskOutput, task.expectedOutput)) next.add(task.id);
+          if (
+            outputsMatch(taskOutput, task.expectedOutput) &&
+            containsRequiredBlocks(json, task.requiredBlocks)
+          ) {
+            next.add(task.id);
+          }
         });
         return next;
       });
@@ -74,13 +96,13 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
     if (showPreview) setTab("preview");
     setConsoleOpen(true);
     console.log("Run at", time(), "code:", code);
-  }, [code, levelTasks, showPreview]);
+  }, [code, json, levelTasks, showPreview]);
 
   useEffect(() => {
-    if (nextLevel && completedTasks.size === levelTasks.length) {
-      navigate(`/level/${nextLevel}`);
+    if (completedTasks.size === levelTasks.length) {
+      setCompletionPopupOpen(true);
     }
-  }, [completedTasks, levelTasks.length, navigate, nextLevel]);
+  }, [completedTasks, levelTasks.length]);
 
   // Ctrl + Enter = zaženi
   useEffect(() => {
@@ -107,7 +129,16 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
 
   const failed = Boolean(result?.error);
 
-  if (completionMessage && completedTasks.size === levelTasks.length) {
+  const handleContinue = () => {
+    setCompletionPopupOpen(false);
+    if (nextLevel) {
+      navigate(`/level/${nextLevel}`);
+    } else if (completionMessage) {
+      setFinalScreenOpen(true);
+    }
+  };
+
+  if (finalScreenOpen) {
     return (
       <main className="completion-screen">
         <h1>{completionMessage}</h1>
@@ -203,6 +234,17 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
                         {completed && <span className="task-status">✓ Completed</span>}
                       </div>
                       <p>{task.description}</p>
+                      {task.theory && (
+                        <div className="task-theory">
+                          <strong>Teorija:</strong> {task.theory}
+                        </div>
+                      )}
+                      {task.requiredBlocks?.length > 0 && (
+                        <div className="task-requirements">
+                          <strong>Obvezni bloki:</strong>{" "}
+                          {task.requiredBlocks.join(", ")}
+                        </div>
+                      )}
                       <div className="expected-output">
                         <span>Expected output</span>
                         <code>{task.expectedOutput.join("\n")}</code>
@@ -265,6 +307,18 @@ export default function App({ levelNumber, levelTasks = defaultTasks, toolbox = 
           </footer>
         </aside>
       </main>
+      {completionPopupOpen && (
+        <div className="completion-modal-backdrop" role="presentation">
+          <section className="completion-modal" role="dialog" aria-modal="true" aria-labelledby="completion-title">
+            <div className="completion-icon" aria-hidden="true">✓</div>
+            <h2 id="completion-title">Level je bil uspešno opravljen</h2>
+            <p>Odlično delo! Vse naloge na tem levelu so zaključene.</p>
+            <button type="button" className="btn primary" onClick={handleContinue}>
+              Nadaljuj
+            </button>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

@@ -66,6 +66,49 @@ body {
   line-height: 1.15;
 }
 
+.completion-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 20, 32, 0.62);
+}
+
+.completion-modal {
+  width: min(440px, 100%);
+  padding: 32px;
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 18px 60px rgba(10, 20, 50, 0.3);
+  text-align: center;
+}
+
+.completion-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--good);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.completion-modal h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.completion-modal p {
+  margin: 10px 0 24px;
+  color: var(--mut);
+}
+
 button {
   font: inherit;
   color: inherit;
@@ -296,6 +339,29 @@ kbd {
   margin: 8px 0 14px;
   color: var(--mut);
   font-size: 13px;
+}
+
+.task-theory {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--ac);
+  color: var(--mut);
+  font-size: 13px;
+}
+
+.task-theory strong {
+  color: var(--tx);
+}
+
+.task-requirements {
+  margin: 0 0 14px;
+  color: var(--mut);
+  font-size: 12px;
+}
+
+.task-requirements strong {
+  color: var(--tx);
 }
 
 .expected-output {
