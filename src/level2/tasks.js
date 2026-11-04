@@ -6,7 +6,7 @@ export const tasksLevel2 = [
       "Uporabi novi blok HTML, izberi značko p in vanjo vstavi besedilo 2.",
     theory:
       "HTML element je sestavljen iz značke in vsebine. Značka p predstavlja odstavek, atribut id pa elementu dodeli enolično ime, po katerem ga lahko pozneje poiščeš in oblikuješ s CSS-om ali JavaScriptom.",
-    requiredBlocks: ["html_element", "text"],
+    checks: [{ type: "text", selector: "p", match: "exact", value: "2" }],
     expectedHtml: `<p id="element">2</p>`,
   },
   {
@@ -15,7 +15,9 @@ export const tasksLevel2 = [
     description: "Z blokom HTML ustvari značko h2 z vsebino 2-naslov.",
     theory:
       "Naslovne značke h1–h6 predstavljajo hierarhijo vsebine. h1 je najpomembnejši naslov, h2 pa podnaslov njegovega dela. Hierarhična struktura pomaga bralcem, iskalnikom in pripomočkom za dostopnost razumeti zgradbo strani.",
-    requiredBlocks: ["html_element", "text"],
+    checks: [
+      { type: "text", selector: "h2", match: "exact", value: "2-naslov" },
+    ],
     expectedHtml: `<h2 id="element">2-naslov</h2>`,
   },
   {
@@ -24,7 +26,14 @@ export const tasksLevel2 = [
     description: "Ustvari element small z vsebino 2-podrobnost.",
     theory:
       "Značka small označuje manj pomembno spremno vsebino, kot so opombe, pravne informacije ali dodatne podrobnosti. Element ni samo vizualno manjši; pravilna semantična značka pove tudi pomen vsebine brskalniku in tehnologijam za pomoč uporabnikom.",
-    requiredBlocks: ["html_element", "text"],
+    checks: [
+      {
+        type: "text",
+        selector: "small",
+        match: "exact",
+        value: "2-podrobnost",
+      },
+    ],
     expectedHtml: `<small id="element">2-podrobnost</small>`,
   },
 ];

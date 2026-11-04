@@ -1,6 +1,6 @@
 import { Order } from "blockly/javascript";
 import { namedBlock } from "../blockNames";
-import { valueInput } from "./utils";
+import { parentElement, valueInput } from "./utils";
 
 export const htmlElement = {
   definition: namedBlock("HTML", {
@@ -28,8 +28,10 @@ export const htmlElement = {
   }),
   generator: (block, generator) => {
     const tag = block.getFieldValue("TAG") || "p";
-    const id = block.getFieldValue("ID") || "element";
+    const id = block.getFieldValue("ID").trim();
     const text = generator.valueToCode(block, "TEXT", Order.ATOMIC) || '""';
-    return `{ const name = "NamedElement" + Math.floor(Math.random() * 100000); const element = document.createElement("${tag}"); element.id = "${id}"; element.name = name; element.${tag === "input" ? "placeholder" : "textContent"} = ${text}; const output = document.getElementById("output"); if (output) output.appendChild(element); }\n`;
+    const content = tag === "input" ? "placeholder" : "textContent";
+    const setId = id ? `  element.id = ${JSON.stringify(id)};\n` : "";
+    return `{\n  const element = document.createElement(${JSON.stringify(tag)});\n${setId}  element.${content} = ${text};\n  const parent = ${parentElement(block)};\n  if (parent) parent.appendChild(element);\n}\n`;
   },
 };

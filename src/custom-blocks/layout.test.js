@@ -3,7 +3,7 @@ import "blockly/blocks";
 import "./index";
 import * as Blockly from "blockly/core";
 import { javascriptGenerator } from "blockly/javascript";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { run } from "../interpreter";
 
 // jsdom doesn't implement innerText
@@ -85,8 +85,39 @@ test("vsebniki se lahko gnezdijo", () => {
     ),
   ]);
 
-  const strip = (html) => html.replace(/ style="[^"]*"/g, "");
   expect(strip(output.innerHTML)).toBe(
     "<div><h1>a</h1><div><p>b</p></div><p>c</p></div><h1>d</h1>",
   );
+});
+
+const htmlElement = (tag, id, value) => ({
+  type: "html_element",
+  fields: { TAG: tag, ID: id },
+  inputs: { TEXT: text(value) },
+});
+
+const strip = (html) => html.replace(/ style="[^"]*"/g, "");
+
+describe("HTML blok", () => {
+  test("se doda v vsebnik, v katerem je", () => {
+    const output = render([
+      page(
+        container(htmlElement("h2", "naslov", "a")),
+        htmlElement("p", "", "b"),
+      ),
+    ]);
+    expect(strip(output.innerHTML)).toBe(
+      '<div><h2 id="naslov">a</h2></div><p>b</p>',
+    );
+  });
+
+  test("narekovaji v id-ju ne pokvarijo programa", () => {
+    const output = render([page(htmlElement("p", 'a"b', "x"))]);
+    expect(output.firstElementChild.id).toBe('a"b');
+  });
+
+  test("brez Strani (leveli brez korenskega bloka) se doda v izpis", () => {
+    const output = render([htmlElement("small", "element", "c")]);
+    expect(output.innerHTML).toBe('<small id="element">c</small>');
+  });
 });

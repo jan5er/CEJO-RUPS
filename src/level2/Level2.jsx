@@ -10,6 +10,7 @@ export default function Level2() {
       toolbox={toolboxLevel2}
       nextLevel={3}
       showPreview
+      rootBlockType="page_level1"
     />
   );
 }
