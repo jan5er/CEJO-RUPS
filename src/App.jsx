@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { passesChecks } from "./checks";
 import { BlockEditor } from "./components/BlockEditor";
 import { ExpectedOutput } from "./components/ExpectedOutput";
 import { run } from "./interpreter";
@@ -106,10 +107,11 @@ export default function App({
       const taskOutput = showPreview
         ? readPreviewOutput(previewRef.current)
         : execution.output;
-      if (
-        outputsMatch(taskOutput, htmlToLines(currentTask.expectedHtml))
-        && containsRequiredBlocks(json, currentTask.requiredBlocks)
-      ) {
+      const passed = currentTask.checks
+        ? passesChecks(previewRef.current, currentTask.checks)
+        : outputsMatch(taskOutput, htmlToLines(currentTask.expectedHtml))
+          && containsRequiredBlocks(json, currentTask.requiredBlocks);
+      if (passed) {
         setCompletedTasks((current) => new Set(current).add(currentTask.id));
       }
     }
