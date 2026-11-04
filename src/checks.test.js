@@ -85,3 +85,40 @@ test("vsa preverjanja morajo uspeti", () => {
     ]),
   ).toBe(false);
 });
+
+describe("within", () => {
+  const sameDiv = [
+    {
+      type: "within",
+      selector: "div",
+      checks: [
+        { type: "text", selector: "h1", match: "exact", value: "1-naslov" },
+        { type: "text", selector: "p", match: "exact", value: "1-opis" },
+      ],
+    },
+  ];
+
+  test("oba elementa v istem vsebniku", () => {
+    const root = output("<div><h1>1-naslov</h1><p>1-opis</p></div>");
+    expect(passesChecks(root, sameDiv)).toBe(true);
+  });
+
+  test("ločena sosednja vsebnika ne uspeta", () => {
+    const root = output(
+      "<div><h1>1-naslov</h1></div><div><p>1-opis</p></div>",
+    );
+    expect(passesChecks(root, sameDiv)).toBe(false);
+  });
+
+  test("gnezdenje znotraj vsebnika je poljubno", () => {
+    const root = output(
+      "<div><div><h1>1-naslov</h1></div><p>1-opis</p></div>",
+    );
+    expect(passesChecks(root, sameDiv)).toBe(true);
+  });
+
+  test("brez ujemajočega elementa ne uspe", () => {
+    const root = output("<h1>1-naslov</h1><p>1-opis</p>");
+    expect(passesChecks(root, sameDiv)).toBe(false);
+  });
+});

@@ -19,6 +19,8 @@ const checkTypes = {
       matches(element.textContent.trim(), value),
     );
   },
+  within: (root, { selector, checks }) =>
+    query(root, selector).some((element) => passesChecks(element, checks)),
 };
 
 export function passesChecks(root, checks) {

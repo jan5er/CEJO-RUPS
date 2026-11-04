@@ -20,11 +20,14 @@ export const tasksLevel1 = [
     theory:
       "Odstavek je namenjen daljšemu opisu, navodilu ali razlagi pod naslovom. Ločevanje naslova in opisa izboljša berljivost ter uporabnikom hitro pokaže, kaj je najpomembnejše. Vsebnik je uporaben, ko želiš več povezanih elementov obravnavati kot eno skupino.",
     checks: [
-      { type: "exists", selector: "div" },
-      { type: "exists", selector: "div h1" },
-      { type: "text", selector: "div h1", match: "exact", value: "1-naslov" },
-      { type: "exists", selector: "div p" },
-      { type: "text", selector: "div p", match: "exact", value: "1-opis" },
+      {
+        type: "within",
+        selector: "div",
+        checks: [
+          { type: "text", selector: "h1", match: "exact", value: "1-naslov" },
+          { type: "text", selector: "p", match: "exact", value: "1-opis" },
+        ],
+      },
     ],
     expectedHtml: `
 <div style="width: fit-content; margin-left: auto; margin-right: auto">
