@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing heading element for level 1
-export const headingLevel1JSON = {
+export const headingLevel1JSON = namedBlock("Naslov", {
   type: "heading_level1",
   tooltip: "Naslov",
   helpUrl: "",
-  message0: "Naslov %1",
+  message0: "%1",
   args0: [
     {
       type: "input_value",
@@ -17,7 +18,7 @@ export const headingLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for heading element
 export const initGenHeading = () => {

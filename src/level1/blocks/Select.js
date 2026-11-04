@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing select element for level 1
-export const selectLevel1JSON = {
+export const selectLevel1JSON = namedBlock("Izbirno polje", {
   type: "select_level1",
   tooltip: "Izbirno polje, ki shrani izbrano vrednost v spremenljivko",
   helpUrl: "",
-  message0: "Izbirno polje | Oznaka: %1  Vrednosti: %2",
+  message0: "| Oznaka: %1  Vrednosti: %2",
   args0: [
     {
       type: "input_value",
@@ -22,7 +23,7 @@ export const selectLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for select element
 export const initGenSelect = () => {

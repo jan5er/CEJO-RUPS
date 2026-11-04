@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing checkbox element for level 1
-export const checkboxLevel1JSON = {
+export const checkboxLevel1JSON = namedBlock("Potrditveno polje", {
   type: "checkbox_level1",
   tooltip: "Potrditveno polje, ki shrani drži/ne drži v spremenljivko",
   helpUrl: "",
-  message0: "Potrditveno polje | Oznaka: %1",
+  message0: "| Oznaka: %1",
   args0: [
     {
       type: "input_value",
@@ -17,7 +18,7 @@ export const checkboxLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for checkbox element
 export const initGenCombobox = () => {

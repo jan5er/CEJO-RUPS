@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing button element for level 1
-export const buttonLevel1JSON = {
+export const buttonLevel1JSON = namedBlock("Gumb", {
   type: "button_level1",
   tooltip: "",
   helpUrl: "",
-  message0: "Gumb | Ime: %1",
+  message0: "| Ime: %1",
   args0: [
     {
       type: "input_value",
@@ -17,7 +18,7 @@ export const buttonLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for button element
 export const initGenButton = () => {

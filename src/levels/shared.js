@@ -1,5 +1,6 @@
 import * as Blockly from "blockly/core";
 import { javascriptGenerator, Order } from "blockly/javascript";
+import { namedBlock } from "../blockNames";
 
 const valueInput = (name, check = "String") => ({
   type: "input_value",
@@ -8,9 +9,9 @@ const valueInput = (name, check = "String") => ({
 });
 
 export function colorBlock() {
-  return {
+  return namedBlock("barva", {
     type: "color_value",
-    message0: "barva %1",
+    message0: "%1",
     args0: [
       {
         type: "field_dropdown",
@@ -27,13 +28,13 @@ export function colorBlock() {
     ],
     output: "String",
     colour: 20,
-  };
+  });
 }
 
 export function htmlElementBlock() {
-  return {
+  return namedBlock("HTML", {
     type: "html_element",
-    message0: "HTML %1 id %2 vsebina %3",
+    message0: "%1 id %2 vsebina %3",
     args0: [
       {
         type: "field_dropdown",
@@ -53,13 +54,13 @@ export function htmlElementBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 210,
-  };
+  });
 }
 
 export function cssStyleBlock() {
-  return {
+  return namedBlock("CSS", {
     type: "css_style",
-    message0: "CSS za %1 velikost %2 barva %3 teža %4 margin %5 padding %6",
+    message0: "za %1 velikost %2 barva %3 teža %4 margin %5 padding %6",
     args0: [
       { type: "field_input", name: "ID", text: "element" },
       valueInput("FONT_SIZE", "Number"),
@@ -71,13 +72,13 @@ export function cssStyleBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 160,
-  };
+  });
 }
 
 export function variableSetBlock() {
-  return {
+  return namedBlock("nastavi spremenljivko", {
     type: "variable_set",
-    message0: "nastavi spremenljivko %1 na %2",
+    message0: "%1 na %2",
     args0: [
       { type: "field_input", name: "NAME", text: "vrednost" },
       valueInput("VALUE"),
@@ -85,23 +86,23 @@ export function variableSetBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 330,
-  };
+  });
 }
 
 export function variableGetBlock() {
-  return {
+  return namedBlock("vrednost spremenljivke", {
     type: "variable_get",
-    message0: "vrednost spremenljivke %1",
+    message0: "%1",
     args0: [{ type: "field_input", name: "NAME", text: "vrednost" }],
     output: null,
     colour: 330,
-  };
+  });
 }
 
 export function ifBlock() {
-  return {
+  return namedBlock("če", {
     type: "if_statement",
-    message0: "če %1 potem %2",
+    message0: "%1 potem %2",
     args0: [
       valueInput("CONDITION", "Boolean"),
       { type: "input_statement", name: "DO" },
@@ -109,13 +110,13 @@ export function ifBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 210,
-  };
+  });
 }
 
 export function switchBlock() {
-  return {
+  return namedBlock("switch", {
     type: "switch_statement",
-    message0: "switch ( %1 ) case %2: %3 case %4: %5 case %6: %7 default: %8",
+    message0: "( %1 ) case %2: %3 case %4: %5 case %6: %7 default: %8",
     args0: [
       valueInput("VALUE"),
       valueInput("CASE"),
@@ -129,13 +130,13 @@ export function switchBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 210,
-  };
+  });
 }
 
 export function repeatBlock() {
-  return {
+  return namedBlock("ponovi", {
     type: "repeat_loop",
-    message0: "ponovi %1 krat %2",
+    message0: "%1 krat %2",
     args0: [
       valueInput("TIMES", "Number"),
       { type: "input_statement", name: "DO" },
@@ -143,18 +144,18 @@ export function repeatBlock() {
     previousStatement: null,
     nextStatement: null,
     colour: 290,
-  };
+  });
 }
 
 export function consoleOutputBlock() {
-  return {
+  return namedBlock("izpiši v konzolo", {
     type: "console_output",
-    message0: "izpiši v konzolo %1",
+    message0: "%1",
     args0: [valueInput("VALUE")],
     previousStatement: null,
     nextStatement: null,
     colour: 120,
-  };
+  });
 }
 
 export function registerBlocks(definitions) {

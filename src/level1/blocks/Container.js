@@ -1,11 +1,12 @@
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing container element for level 1
-export const containerLevel1JSON = {
+export const containerLevel1JSON = namedBlock("Vsebnik", {
   type: "container_level1",
   tooltip: "Vsebnik elemente centrira na strani in dodano novo vrstico",
   helpUrl: "",
-  message0: "Vsebnik %1",
+  message0: "%1",
   args0: [
     {
       type: "input_statement",
@@ -13,7 +14,7 @@ export const containerLevel1JSON = {
     },
   ],
   colour: "#da7d12",
-};
+});
 
 //Generator for container element
 export const initGenContainer = () => {

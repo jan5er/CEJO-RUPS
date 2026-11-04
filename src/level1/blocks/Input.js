@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing input element for level 1
-export const inputLevel1JSON = {
+export const inputLevel1JSON = namedBlock("Vnosno polje", {
   type: "input_level1",
   tooltip: "Vnosno polje, ki shrani spremembe v spremenljivko",
   helpUrl: "",
-  message0: "Vnosno polje | Oznaka: %1",
+  message0: "| Oznaka: %1",
   args0: [
     {
       type: "input_value",
@@ -17,7 +18,7 @@ export const inputLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for input element
 export const initGenInput = () => {

@@ -1,12 +1,13 @@
 import { Order } from "blockly/javascript";
+import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
 
 //JSON for representing simple text element for level 1
-export const simpleTextLevel1JSON = {
+export const simpleTextLevel1JSON = namedBlock("Preprosto besedilo", {
   type: "text_simple_level1",
   tooltip: "Preprosto besedilo",
   helpUrl: "",
-  message0: "Preprosto besedilo %1",
+  message0: "%1",
   args0: [
     {
       type: "input_value",
@@ -17,7 +18,7 @@ export const simpleTextLevel1JSON = {
   previousStatement: null,
   nextStatement: null,
   colour: "#da7d12",
-};
+});
 
 //Generator for simple text element
 export const initGenSimpleText = () => {

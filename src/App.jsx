@@ -4,6 +4,7 @@ import { BlockEditor } from "./components/BlockEditor";
 import { run } from "./interpreter";
 import { TOOLBOX as defaultToolbox } from "./toolbox";
 import "./App.css";
+import { blockName } from "./blockNames";
 import { blocks as defaultBlocks } from "./blocks.js";
 import { forBlock as defaultGenerators } from "./generator";
 
@@ -353,11 +354,11 @@ export default function App({
                         {task.requiredBlocks?.length > 0 && (
                           <div className="task-requirements">
                             <strong>Obvezni bloki:</strong>{" "}
-                            {task.requiredBlocks.join(", ")}
+                            {task.requiredBlocks.map(blockName).join(", ")}
                           </div>
                         )}
                         <div className="expected-output">
-                          <span>Expected output</span>
+                          <span>Pričakovan izpis</span>
                           <code>{task.expectedOutput.join("\n")}</code>
                         </div>
                       </article>
