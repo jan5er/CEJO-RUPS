@@ -348,6 +348,10 @@ kbd {
   text-decoration: line-through;
 }
 
+.task-next {
+  margin-top: 14px;
+}
+
 .task-status {
   flex: none;
   color: var(--good);

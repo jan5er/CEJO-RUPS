@@ -80,12 +80,16 @@ export default function App({
   const [consoleOpen, setConsoleOpen] = useState(false);
   const [tab, setTab] = useState("js");
   const [copied, setCopied] = useState(false);
+  const [taskIndex, setTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(() => new Set());
   const [completionPopupOpen, setCompletionPopupOpen] = useState(false);
   const [finalScreenOpen, setFinalScreenOpen] = useState(false);
   const previewRef = useRef(null);
 
   const blockCount = countBlocks(json);
+  const currentTask = levelTasks[taskIndex];
+  const currentCompleted = completedTasks.has(currentTask.id);
+  const isLastTask = taskIndex === levelTasks.length - 1;
 
   const handleRun = useCallback(() => {
     previewRef.current?.replaceChildren();
@@ -95,29 +99,22 @@ export default function App({
       const taskOutput = showPreview
         ? readPreviewOutput(previewRef.current)
         : execution.output;
-      setCompletedTasks((current) => {
-        const next = new Set(current);
-        levelTasks.forEach((task) => {
-          if (
-            outputsMatch(taskOutput, task.expectedOutput)
-            && containsRequiredBlocks(json, task.requiredBlocks)
-          ) {
-            next.add(task.id);
-          }
-        });
-        return next;
-      });
+      if (
+        outputsMatch(taskOutput, currentTask.expectedOutput)
+        && containsRequiredBlocks(json, currentTask.requiredBlocks)
+      ) {
+        setCompletedTasks((current) => new Set(current).add(currentTask.id));
+      }
     }
     if (showPreview) setTab("preview");
     setConsoleOpen(Boolean(execution.error));
     console.log("Run at", time(), "code:", code);
-  }, [code, json, levelTasks, showPreview]);
+  }, [code, json, currentTask, showPreview]);
 
-  useEffect(() => {
-    if (completedTasks.size === levelTasks.length) {
-      setCompletionPopupOpen(true);
-    }
-  }, [completedTasks, levelTasks.length]);
+  const handleNextTask = () => {
+    if (isLastTask) setCompletionPopupOpen(true);
+    else setTaskIndex((index) => index + 1);
+  };
 
   // Ctrl + Enter = zaženi
   useEffect(() => {
@@ -291,7 +288,7 @@ export default function App({
               className={tab === "tasks" ? "on" : ""}
               onClick={() => setTab("tasks")}
             >
-              Naloge
+              Naloge{currentCompleted && " ✓"}
             </button>
           </div>
 
@@ -327,43 +324,46 @@ export default function App({
                 <div className="tasks-panel-head">
                   <h2>Naloge</h2>
                   <span className="task-progress">
-                    {completedTasks.size}/{levelTasks.length}
+                    {taskIndex + 1}/{levelTasks.length}
                   </span>
                 </div>
                 <div className="task-list">
-                  {levelTasks.map((task) => {
-                    const completed = completedTasks.has(task.id);
-
-                    return (
-                      <article
-                        className={`task-item${completed ? " completed" : ""}`}
-                        key={task.id}
+                  <article
+                    className={`task-item${currentCompleted ? " completed" : ""}`}
+                    key={currentTask.id}
+                  >
+                    <div className="task-heading">
+                      <h3>{currentTask.title}</h3>
+                      {currentCompleted && (
+                        <span className="task-status">✓ Opravljeno</span>
+                      )}
+                    </div>
+                    <p>{currentTask.description}</p>
+                    {currentTask.theory && (
+                      <div className="task-theory">
+                        <strong>Teorija:</strong> {currentTask.theory}
+                      </div>
+                    )}
+                    {currentTask.requiredBlocks?.length > 0 && (
+                      <div className="task-requirements">
+                        <strong>Obvezni bloki:</strong>{" "}
+                        {currentTask.requiredBlocks.map(blockName).join(", ")}
+                      </div>
+                    )}
+                    <div className="expected-output">
+                      <span>Pričakovan izpis</span>
+                      <code>{currentTask.expectedOutput.join("\n")}</code>
+                    </div>
+                    {currentCompleted && (
+                      <button
+                        type="button"
+                        className="btn primary small task-next"
+                        onClick={handleNextTask}
                       >
-                        <div className="task-heading">
-                          <h3>{task.title}</h3>
-                          {completed && (
-                            <span className="task-status">✓ Opravljeno</span>
-                          )}
-                        </div>
-                        <p>{task.description}</p>
-                        {task.theory && (
-                          <div className="task-theory">
-                            <strong>Teorija:</strong> {task.theory}
-                          </div>
-                        )}
-                        {task.requiredBlocks?.length > 0 && (
-                          <div className="task-requirements">
-                            <strong>Obvezni bloki:</strong>{" "}
-                            {task.requiredBlocks.map(blockName).join(", ")}
-                          </div>
-                        )}
-                        <div className="expected-output">
-                          <span>Pričakovan izpis</span>
-                          <code>{task.expectedOutput.join("\n")}</code>
-                        </div>
-                      </article>
-                    );
-                  })}
+                        {isLastTask ? "Zaključi level" : "Naslednja naloga →"}
+                      </button>
+                    )}
+                  </article>
                 </div>
               </div>
             ) : null}
