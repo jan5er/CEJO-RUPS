@@ -396,6 +396,48 @@ kbd {
   font-weight: 700;
 }
 
+.expected-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.expected-output-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+}
+
+.expected-output-tabs button {
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--mut);
+  font: inherit;
+  cursor: pointer;
+}
+
+.expected-output-tabs button.on {
+  background: var(--surface);
+  color: var(--tx);
+}
+
+.expected-page {
+  padding: 8px 12px;
+  overflow: auto;
+  background: var(--surface-2);
+  border: 1px solid var(--bd);
+  border-radius: 6px;
+  color: var(--tx);
+  font-size: 14px;
+  font-weight: 400;
+}
+
 .expected-output code {
   display: block;
   padding: 8px 10px;

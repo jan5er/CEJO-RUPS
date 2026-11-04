@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { BlockEditor } from "./components/BlockEditor";
+import { ExpectedOutput } from "./components/ExpectedOutput";
 import { run } from "./interpreter";
 import { TOOLBOX as defaultToolbox } from "./toolbox";
 import "./App.css";
@@ -63,6 +64,12 @@ function readPreviewOutput(element) {
   return lines;
 }
 
+function htmlToLines(html) {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  return readPreviewOutput(container);
+}
+
 export default function App({
   levelNumber,
   levelTasks = defaultTasks,
@@ -100,7 +107,7 @@ export default function App({
         ? readPreviewOutput(previewRef.current)
         : execution.output;
       if (
-        outputsMatch(taskOutput, currentTask.expectedOutput)
+        outputsMatch(taskOutput, htmlToLines(currentTask.expectedHtml))
         && containsRequiredBlocks(json, currentTask.requiredBlocks)
       ) {
         setCompletedTasks((current) => new Set(current).add(currentTask.id));
@@ -350,10 +357,7 @@ export default function App({
                         {currentTask.requiredBlocks.map(blockName).join(", ")}
                       </div>
                     )}
-                    <div className="expected-output">
-                      <span>Pričakovan izpis</span>
-                      <code>{currentTask.expectedOutput.join("\n")}</code>
-                    </div>
+                    <ExpectedOutput html={currentTask.expectedHtml} />
                     {currentCompleted && (
                       <button
                         type="button"

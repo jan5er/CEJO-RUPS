@@ -15,14 +15,13 @@ export const tasksLevel6 = [
       "math_number",
       "text",
     ],
-    expectedOutput: [
-      "6-naslov",
-      "6-vrstica",
-      "6-naslov",
-      "6-vrstica",
-      "6-naslov",
-      "6-vrstica",
-    ],
+    expectedHtml: `
+<h1 id="naslov">6-naslov</h1>
+<p id="vrstica">6-vrstica</p>
+<h1 id="naslov">6-naslov</h1>
+<p id="vrstica">6-vrstica</p>
+<h1 id="naslov">6-naslov</h1>
+<p id="vrstica">6-vrstica</p>`,
   },
   {
     id: "level-6-task-2",
@@ -39,7 +38,9 @@ export const tasksLevel6 = [
       "html_element",
       "text",
     ],
-    expectedOutput: ["6-izbira", "6-izbira"],
+    expectedHtml: `
+<p id="izbira">6-izbira</p>
+<p id="izbira">6-izbira</p>`,
   },
   {
     id: "level-6-task-3",
@@ -55,16 +56,15 @@ export const tasksLevel6 = [
       "math_number",
       "text",
     ],
-    expectedOutput: [
-      "6-skupina",
-      "6-podatek",
-      "6-skupina",
-      "6-podatek",
-      "6-skupina",
-      "6-podatek",
-      "6-skupina",
-      "6-podatek",
-    ],
+    expectedHtml: `
+<h2 id="skupina">6-skupina</h2>
+<p id="podatek">6-podatek</p>
+<h2 id="skupina">6-skupina</h2>
+<p id="podatek">6-podatek</p>
+<h2 id="skupina">6-skupina</h2>
+<p id="podatek">6-podatek</p>
+<h2 id="skupina">6-skupina</h2>
+<p id="podatek">6-podatek</p>`,
   },
   {
     id: "level-6-task-4",
@@ -82,17 +82,16 @@ export const tasksLevel6 = [
       "math_number",
       "text",
     ],
-    expectedOutput: [
-      "6-seznam",
-      "6-status",
-      "6-seznam",
-      "6-status",
-      "6-seznam",
-      "6-status",
-      "6-seznam",
-      "6-status",
-      "6-seznam",
-      "6-status",
-    ],
+    expectedHtml: `
+<h1 id="seznam" style="color: #1971c2">6-seznam</h1>
+<p id="status">6-status</p>
+<h1 id="seznam" style="color: #1971c2">6-seznam</h1>
+<p id="status">6-status</p>
+<h1 id="seznam" style="color: #1971c2">6-seznam</h1>
+<p id="status">6-status</p>
+<h1 id="seznam" style="color: #1971c2">6-seznam</h1>
+<p id="status">6-status</p>
+<h1 id="seznam" style="color: #1971c2">6-seznam</h1>
+<p id="status">6-status</p>`,
   },
 ];

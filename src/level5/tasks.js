@@ -15,7 +15,9 @@ export const tasksLevel5 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["5-naslov", "5-prva"],
+    expectedHtml: `
+<h1 id="naslov" style="font-size: 24px">5-naslov</h1>
+<p id="prva">5-prva</p>`,
   },
   {
     id: "level-5-task-2",
@@ -34,7 +36,9 @@ export const tasksLevel5 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["5-drugi", "5-podrobnost"],
+    expectedHtml: `
+<h1 id="drugi" style="color: #e03131">5-drugi</h1>
+<p id="podrobnost" style="padding: 6px">5-podrobnost</p>`,
   },
   {
     id: "level-5-task-3",
@@ -53,7 +57,9 @@ export const tasksLevel5 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["5-privzeto", "5-neznana-izbira"],
+    expectedHtml: `
+<h1 id="privzeto" style="font-size: 18px; color: #f08c00">5-privzeto</h1>
+<p id="opis" style="font-size: 18px; color: #f08c00">5-neznana-izbira</p>`,
   },
   {
     id: "level-5-task-4",
@@ -71,6 +77,8 @@ export const tasksLevel5 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["5-tretji", "5-zakljucek"],
+    expectedHtml: `
+<h1 id="tretji" style="font-size: 20px; font-weight: 700">5-tretji</h1>
+<p id="zakljucek" style="margin: 12px">5-zakljucek</p>`,
   },
 ];

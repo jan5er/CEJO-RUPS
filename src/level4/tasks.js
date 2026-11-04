@@ -16,7 +16,7 @@ export const tasksLevel4 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["4-uspeh"],
+    expectedHtml: `<p id="sporocilo" style="font-size: 20px">4-uspeh</p>`,
   },
   {
     id: "level-4-task-2",
@@ -33,7 +33,9 @@ export const tasksLevel4 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["4-naslov", "4-opis"],
+    expectedHtml: `
+<h1 id="naslov" style="font-size: 26px">4-naslov</h1>
+<p id="opis" style="font-size: 14px; margin: 8px">4-opis</p>`,
   },
   {
     id: "level-4-task-3",
@@ -52,7 +54,7 @@ export const tasksLevel4 = [
       "color_value",
       "text",
     ],
-    expectedOutput: ["4-vecje"],
+    expectedHtml: `<p id="vecje" style="color: #2f9e44">4-vecje</p>`,
   },
   {
     id: "level-4-task-4",
@@ -72,6 +74,6 @@ export const tasksLevel4 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["4-prijava"],
+    expectedHtml: `<h1 id="dobrodoslica" style="font-size: 22px; color: #1971c2">4-prijava</h1>`,
   },
 ];

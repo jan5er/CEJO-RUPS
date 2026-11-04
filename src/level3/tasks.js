@@ -13,7 +13,9 @@ export const tasksLevel3 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["3-naslov", "3-opis"],
+    expectedHtml: `
+<h1 id="naslov" style="font-size: 24px; font-weight: 800">3-naslov</h1>
+<p id="opis" style="color: #1971c2; margin: 10px; padding: 5px">3-opis</p>`,
   },
   {
     id: "level-3-task-2",
@@ -23,7 +25,10 @@ export const tasksLevel3 = [
     theory:
       "Margin je prostor zunaj roba elementa in ločuje element od sosednjih elementov, padding pa je prostor znotraj roba in vsebino odmakne od roba. Pri postavitvi kartic, obrazcev in seznamov moraš razmišljati o obeh vrstah odmika. CSS lahko uporabiš samo na izbranem elementu, medtem ko ostali ohranijo svoje privzete lastnosti.",
     requiredBlocks: ["html_element", "css_style", "math_number", "text"],
-    expectedOutput: ["3-zgoraj", "3-sredina", "3-spodaj"],
+    expectedHtml: `
+<p id="zgoraj">3-zgoraj</p>
+<p id="sredina" style="margin: 20px; padding: 10px">3-sredina</p>
+<p id="spodaj">3-spodaj</p>`,
   },
   {
     id: "level-3-task-3",
@@ -39,7 +44,9 @@ export const tasksLevel3 = [
       "math_number",
       "text",
     ],
-    expectedOutput: ["3-opozorilo", "3-podrobnost"],
+    expectedHtml: `
+<h1 id="opozorilo" style="color: #e03131; font-weight: 800">3-opozorilo</h1>
+<p id="podrobnost" style="color: #2f9e44; font-size: 16px">3-podrobnost</p>`,
   },
   {
     id: "level-3-task-4",
@@ -49,6 +56,8 @@ export const tasksLevel3 = [
     theory:
       "font-size določa hierarhijo besedila: večja velikost je primerna za glavne naslove, manjša pa za podnaslove in opombe. Kombinacija velikosti, teže in odmikov ustvari vizualno hierarhijo, ki uporabniku pokaže, kako so informacije povezane.",
     requiredBlocks: ["html_element", "css_style", "math_number", "text"],
-    expectedOutput: ["3-glavni", "3-podnaslov"],
+    expectedHtml: `
+<h1 id="glavni" style="font-size: 30px; font-weight: 900">3-glavni</h1>
+<h2 id="podnaslov" style="font-size: 18px; margin: 5px; padding: 3px">3-podnaslov</h2>`,
   },
 ];
