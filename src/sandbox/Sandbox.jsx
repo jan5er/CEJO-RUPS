@@ -8,6 +8,7 @@ export default function Sandbox() {
       levelTasks={[]}
       toolbox={toolboxLevel6}
       showPreview
+      rootBlockType="page_level1"
     />
   );
 }
