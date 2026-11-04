@@ -47,6 +47,8 @@ function setupRootBlock(ws, type) {
  * @param {(json: object) => void} [props.onJsonChange]
  * @param {(code: string) => void} [props.onCodeChange]  Generirana JS (samo prikaz)
  * @param {(ws: Blockly.WorkspaceSvg) => void} [props.onWorkspaceChange]
+ * @param {string} props.storageKey  Ključ v localStorage; ob spremembi se naloži drugo platno
+ * @param {string} [props.fallbackStorageKey]  Naloži se, če pod storageKey še ni ničesar
  * @param {string} [props.rootBlockType]  Korenski blok (npr. Stran); izvedejo se samo bloki pripeti nanj
  * @param {string} [props.className]
  */
@@ -58,6 +60,8 @@ export function BlockEditor({
   onJsonChange,
   onCodeChange,
   onWorkspaceChange,
+  storageKey,
+  fallbackStorageKey,
   rootBlockType,
   className,
 }) {
@@ -87,14 +91,17 @@ export function BlockEditor({
       cb.current.onJsonChange?.(Blockly.serialization.workspaces.save(ws));
     };
 
-    load(ws); // namesto initialJson
+    if (!load(ws, storageKey) && fallbackStorageKey)
+      load(ws, fallbackStorageKey);
     if (rootBlockType) setupRootBlock(ws, rootBlockType);
+    save(ws, storageKey);
 
-    ws.addChangeListener((e) => {
+    const onChange = (e) => {
       if (e.isUiEvent) return;
-      save(ws);
+      save(ws, storageKey);
       emit();
-    });
+    };
+    ws.addChangeListener(onChange);
 
     const onScheme = (e) => ws.setTheme(themeFor(e.matches));
     scheme.addEventListener("change", onScheme);
@@ -107,9 +114,19 @@ export function BlockEditor({
     return () => {
       scheme.removeEventListener("change", onScheme);
       ro.disconnect();
+      // dispose calls onChange which calls save, therefore we need to remove onChange so we aren't
+      // saving an empty canvas
+      ws.removeChangeListener(onChange);
       ws.dispose();
     };
-  }, [blocks, forBlock, toolbox, rootBlockType]);
+  }, [
+    blocks,
+    forBlock,
+    toolbox,
+    rootBlockType,
+    storageKey,
+    fallbackStorageKey,
+  ]);
 
   return <div ref={containerRef} className={className} />;
 }

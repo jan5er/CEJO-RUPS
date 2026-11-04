@@ -47,6 +47,8 @@ function containsRequiredBlocks(json, requiredBlocks = []) {
 
 const time = () => new Date().toLocaleTimeString("sl-SI");
 
+const workspaceKey = (task) => `workspace:${task.id}`;
+
 function readPreviewOutput(element) {
   if (!element) return [];
 
@@ -122,8 +124,13 @@ export default function App({
   }, [code, json, currentTask, showPreview]);
 
   const handleNextTask = () => {
-    if (isLastTask) setCompletionPopupOpen(true);
-    else setTaskIndex((index) => index + 1);
+    if (isLastTask) {
+      setCompletionPopupOpen(true);
+      return;
+    }
+    setTaskIndex((index) => index + 1);
+    setResult(null);
+    previewRef.current?.replaceChildren();
   };
 
   // Ctrl + Enter = zaženi
@@ -199,14 +206,13 @@ export default function App({
                   onCodeChange={setCode}
                   onJsonChange={setJson}
                   rootBlockType={rootBlockType}
+                  storageKey={workspaceKey(currentTask)}
+                  fallbackStorageKey={
+                    taskIndex > 0
+                      ? workspaceKey(levelTasks[taskIndex - 1])
+                      : undefined
+                  }
                 />
-
-                {blockCount === 0 && (
-                  <div className="empty" aria-hidden="true">
-                    <div className="empty-emoji">🧩</div>
-                    <p>Povleci bloke iz menija na levi in jih zloži sem</p>
-                  </div>
-                )}
                 <section
                   className={`drawer${consoleOpen ? " open" : ""}`}
                   aria-label="Konzola"

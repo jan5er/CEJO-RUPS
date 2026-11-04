@@ -1,21 +1,27 @@
 import * as Blockly from "blockly/core";
 
-const storageKey = "mainWorkspace";
-
-/** @param {Blockly.Workspace} workspace */
-export const save = (workspace) => {
+/**
+ * @param {Blockly.Workspace} workspace
+ * @param {string} storageKey
+ */
+export const save = (workspace, storageKey) => {
   const data = Blockly.serialization.workspaces.save(workspace);
   window.localStorage?.setItem(storageKey, JSON.stringify(data));
 };
 
-/** @param {Blockly.Workspace} workspace */
-export const load = (workspace) => {
+/**
+ * @param {Blockly.Workspace} workspace
+ * @param {string} storageKey
+ * @returns {boolean}
+ */
+export const load = (workspace, storageKey) => {
   const data = window.localStorage?.getItem(storageKey);
-  if (!data) return;
+  if (!data) return false;
 
   Blockly.Events.disable();
   try {
     Blockly.serialization.workspaces.load(JSON.parse(data), workspace, false);
+    return true;
   } catch (error) {
     workspace.clear();
     window.localStorage?.removeItem(storageKey);
@@ -23,6 +29,7 @@ export const load = (workspace) => {
       "Could not restore the saved workspace. Starting empty.",
       error,
     );
+    return false;
   } finally {
     Blockly.Events.enable();
   }
