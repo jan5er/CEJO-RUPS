@@ -1,5 +1,8 @@
 *
 
+!/assets/
+!/assets/*.png
+
 !/public/
 !/public/*.svg
 
