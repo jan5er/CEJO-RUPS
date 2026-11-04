@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import "./utils/generator";
 import "blockly/blocks";
+import "./index";
 import * as Blockly from "blockly/core";
 import { javascriptGenerator } from "blockly/javascript";
 import { expect, test } from "vitest";

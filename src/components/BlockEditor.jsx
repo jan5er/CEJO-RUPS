@@ -4,9 +4,7 @@ import { javascriptGenerator } from "blockly/javascript";
 import * as Sl from "blockly/msg/sl";
 import { useEffect, useRef } from "react";
 import { themeFor, WORKSPACE_OPTIONS } from "../BlocklyTheme";
-
-//import { blocks } from "../blocks.js";
-//import { forBlock } from "../generator";
+import "../custom-blocks";
 import { load, save } from "../serialization";
 
 Blockly.setLocale(Sl); // Nastavimo jezik blokov/teksta na slovenščino
@@ -54,8 +52,6 @@ function setupRootBlock(ws, type) {
  */
 export function BlockEditor({
   toolbox,
-  blocks = [],
-  forBlock = {},
   initialJson,
   onJsonChange,
   onCodeChange,
@@ -71,9 +67,6 @@ export function BlockEditor({
   const initialRef = useRef(initialJson);
 
   useEffect(() => {
-    if (blocks.length) Blockly.common.defineBlocks(blocks);
-    Object.assign(javascriptGenerator.forBlock, forBlock);
-
     const scheme = window.matchMedia("(prefers-color-scheme: dark)");
     const ws = Blockly.inject(containerRef.current, {
       ...WORKSPACE_OPTIONS,
@@ -119,14 +112,7 @@ export function BlockEditor({
       ws.removeChangeListener(onChange);
       ws.dispose();
     };
-  }, [
-    blocks,
-    forBlock,
-    toolbox,
-    rootBlockType,
-    storageKey,
-    fallbackStorageKey,
-  ]);
+  }, [toolbox, rootBlockType, storageKey, fallbackStorageKey]);
 
   return <div ref={containerRef} className={className} />;
 }

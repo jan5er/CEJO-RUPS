@@ -4,11 +4,8 @@ import { passesChecks } from "./checks";
 import { BlockEditor } from "./components/BlockEditor";
 import { ExpectedOutput } from "./components/ExpectedOutput";
 import { run } from "./interpreter";
-import { TOOLBOX as defaultToolbox } from "./toolbox";
 import "./App.css";
 import { blockName } from "./blockNames";
-import { blocks as defaultBlocks } from "./blocks.js";
-import { forBlock as defaultGenerators } from "./generator";
 
 /** Prešteje resnične bloke (brez senčnih privzetih vrednosti).*/
 function countBlocks(json) {
@@ -75,10 +72,8 @@ function htmlToLines(html) {
 
 export default function App({
   levelNumber,
-  levelTasks = defaultTasks,
-  toolbox = defaultToolbox,
-  blockDefinitions = defaultBlocks,
-  generators = defaultGenerators,
+  levelTasks,
+  toolbox,
   nextLevel,
   completionMessage,
   showPreview = false,
@@ -201,8 +196,6 @@ export default function App({
                 <BlockEditor
                   className="editor"
                   toolbox={toolbox}
-                  blocks={blockDefinitions}
-                  forBlock={generators}
                   onCodeChange={setCode}
                   onJsonChange={setJson}
                   rootBlockType={rootBlockType}

@@ -1,43 +1,37 @@
 import { Order } from "blockly/javascript";
-import { namedBlock } from "../../blockNames";
-import { forBlockLevel1 } from "../utils/generator";
-import { parentElement } from "../utils/parent";
+import { namedBlock } from "../blockNames";
+import { parentElement } from "./utils";
 
-//JSON for representing select element for level 1
-export const selectLevel1JSON = namedBlock("Izbirno polje", {
-  type: "select_level1",
-  tooltip: "Izbirno polje, ki shrani izbrano vrednost v spremenljivko",
-  helpUrl: "",
-  message0: "| Oznaka: %1  Vrednosti: %2",
-  args0: [
-    {
-      type: "input_value",
-      name: "LABEL_TEXT",
-      check: "String",
-    },
-    {
-      type: "input_value",
-      name: "POSSIBLE_VALUES",
-      check: "Array",
-    },
-  ],
-  previousStatement: null,
-  nextStatement: null,
-  colour: "#da7d12",
-});
-
-//Generator for select element
-export const initGenSelect = () => {
-  forBlockLevel1.select_level1 = (block, generator) => {
+//Select element with label
+export const select = {
+  definition: namedBlock("Izbirno polje", {
+    type: "select_level1",
+    tooltip: "Izbirno polje, ki shrani izbrano vrednost v spremenljivko",
+    helpUrl: "",
+    message0: "| Oznaka: %1  Vrednosti: %2",
+    args0: [
+      {
+        type: "input_value",
+        name: "LABEL_TEXT",
+        check: "String",
+      },
+      {
+        type: "input_value",
+        name: "POSSIBLE_VALUES",
+        check: "Array",
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: "#da7d12",
+  }),
+  generator: (block, generator) => {
     const labelText = generator.valueToCode(block, "LABEL_TEXT", Order.ATOMIC);
     const possibleValues = generator.valueToCode(
       block,
       "POSSIBLE_VALUES",
       Order.ATOMIC,
     );
-
-    //console.log(possibleValues);
-
     const selectGenCode = generator.provideFunction_(
       "selectGenCode",
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, possibleValues, containerDiv) {
@@ -64,9 +58,6 @@ export const initGenSelect = () => {
 
         }`,
     );
-
-    // Generate the function call for this block.
-    const code = `${selectGenCode}(${labelText},${possibleValues}, ${parentElement(block)});\n`;
-    return code;
-  };
+    return `${selectGenCode}(${labelText},${possibleValues}, ${parentElement(block)});\n`;
+  },
 };

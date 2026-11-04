@@ -1,4 +1,4 @@
-export const TOOLBOX = {
+export const toolboxLevel1 = {
   kind: "categoryToolbox",
   contents: [
     {

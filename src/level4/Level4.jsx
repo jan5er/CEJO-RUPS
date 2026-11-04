@@ -1,6 +1,6 @@
 import App from "../App";
-import { blocksLevel4, forBlockLevel4, toolboxLevel4 } from "../levels/level4";
 import { tasksLevel4 } from "./tasks";
+import { toolboxLevel4 } from "./toolbox";
 
 export default function Level4() {
   return (
@@ -8,8 +8,6 @@ export default function Level4() {
       levelNumber={4}
       levelTasks={tasksLevel4}
       toolbox={toolboxLevel4}
-      blockDefinitions={blocksLevel4}
-      generators={forBlockLevel4}
       nextLevel={5}
       showPreview
     />

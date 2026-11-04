@@ -1,31 +1,27 @@
 import { Order } from "blockly/javascript";
-import { namedBlock } from "../../blockNames";
-import { forBlockLevel1 } from "../utils/generator";
-import { parentElement } from "../utils/parent";
+import { namedBlock } from "../blockNames";
+import { parentElement } from "./utils";
 
-//JSON for representing input element for level 1
-export const inputLevel1JSON = namedBlock("Vnosno polje", {
-  type: "input_level1",
-  tooltip: "Vnosno polje, ki shrani spremembe v spremenljivko",
-  helpUrl: "",
-  message0: "| Oznaka: %1",
-  args0: [
-    {
-      type: "input_value",
-      name: "LABEL_TEXT",
-      check: "String",
-    },
-  ],
-  previousStatement: null,
-  nextStatement: null,
-  colour: "#da7d12",
-});
-
-//Generator for input element
-export const initGenInput = () => {
-  forBlockLevel1.input_level1 = (block, generator) => {
+//Input element with label
+export const input = {
+  definition: namedBlock("Vnosno polje", {
+    type: "input_level1",
+    tooltip: "Vnosno polje, ki shrani spremembe v spremenljivko",
+    helpUrl: "",
+    message0: "| Oznaka: %1",
+    args0: [
+      {
+        type: "input_value",
+        name: "LABEL_TEXT",
+        check: "String",
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: "#da7d12",
+  }),
+  generator: (block, generator) => {
     const labelText = generator.valueToCode(block, "LABEL_TEXT", Order.ATOMIC);
-
     const inputGenCode = generator.provideFunction_(
       "inputGenCode",
       `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerDiv) {
@@ -45,8 +41,6 @@ export const initGenInput = () => {
                 containerDiv.appendChild(inputEl);
         }`,
     );
-    // Generate the function call for this block.
-    const code = `${inputGenCode}(${labelText}, ${parentElement(block)});\n`;
-    return code;
-  };
+    return `${inputGenCode}(${labelText}, ${parentElement(block)});\n`;
+  },
 };

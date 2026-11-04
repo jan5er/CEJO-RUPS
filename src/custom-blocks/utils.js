@@ -1,3 +1,9 @@
+export const valueInput = (name, check = "String") => ({
+  type: "input_value",
+  name,
+  check,
+});
+
 const CONTAINER_TYPE = "container_level1";
 
 const containerDepth = (container) => {
