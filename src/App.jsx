@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { passesChecks } from "./checks";
 import { BlockEditor } from "./components/BlockEditor";
 import { ExpectedOutput } from "./components/ExpectedOutput";
 import { run } from "./interpreter";
+import CoinBadge from "./shop/CoinBadge";
+import { awardTask } from "./shop/progress";
 import "./App.css";
 import { blockName } from "./blockNames";
 
@@ -72,6 +74,7 @@ function htmlToLines(html) {
 
 export default function App({
   levelNumber,
+  levelLabel,
   levelTasks,
   toolbox,
   nextLevel,
@@ -90,18 +93,22 @@ export default function App({
   const [completedTasks, setCompletedTasks] = useState(() => new Set());
   const [completionPopupOpen, setCompletionPopupOpen] = useState(false);
   const [finalScreenOpen, setFinalScreenOpen] = useState(false);
+  const [reward, setReward] = useState(null);
   const previewRef = useRef(null);
 
   const blockCount = countBlocks(json);
+  // Sandbox nima nalog, zato je currentTask lahko undefined
   const currentTask = levelTasks[taskIndex];
-  const currentCompleted = completedTasks.has(currentTask.id);
+  const currentCompleted = Boolean(
+    currentTask && completedTasks.has(currentTask.id),
+  );
   const isLastTask = taskIndex === levelTasks.length - 1;
 
   const handleRun = useCallback(() => {
     previewRef.current?.replaceChildren();
     const execution = run(code);
     setResult({ ...execution, at: time() });
-    if (!execution.error) {
+    if (!execution.error && currentTask) {
       const taskOutput = showPreview
         ? readPreviewOutput(previewRef.current)
         : execution.output;
@@ -111,12 +118,16 @@ export default function App({
           && containsRequiredBlocks(json, currentTask.requiredBlocks);
       if (passed) {
         setCompletedTasks((current) => new Set(current).add(currentTask.id));
+
+        // Kovanci: vsaka naloga se izplača samo enkrat (shranjeno v localStorage).
+        const gained = awardTask(`${levelNumber}:${currentTask.id}`);
+        if (gained > 0) setReward({ coins: gained, id: Date.now() });
       }
     }
     if (showPreview) setTab("preview");
     setConsoleOpen(Boolean(execution.error));
     console.log("Run at", time(), "code:", code);
-  }, [code, json, currentTask, showPreview]);
+  }, [code, json, currentTask, levelNumber, showPreview]);
 
   const handleNextTask = () => {
     if (isLastTask) {
@@ -127,6 +138,12 @@ export default function App({
     setResult(null);
     previewRef.current?.replaceChildren();
   };
+
+  useEffect(() => {
+    if (!reward) return;
+    const timer = setTimeout(() => setReward(null), 2800);
+    return () => clearTimeout(timer);
+  }, [reward]);
 
   // Ctrl + Enter = zaženi
   useEffect(() => {
@@ -171,10 +188,20 @@ export default function App({
   return (
     <div className="app">
       <header className="topbar" style={{ justifyContent: "right" }}>
-        {levelNumber && (
-          <span className="level-label">Level {levelNumber}</span>
+        <Link to="/" className="btn small" style={{ marginRight: "auto" }}>
+          🏠 Domov
+        </Link>
+        {levelLabel ? (
+          <span className="level-label" style={{ marginRight: "auto" }}>
+            {levelLabel}
+          </span>
+        ) : (
+          levelNumber && (
+            <span className="level-label">Level {levelNumber}</span>
+          )
         )}
         <div className="topbar-actions">
+          <CoinBadge />
           <button type="button" className="btn primary" onClick={handleRun}>
             <span aria-hidden="true">▶</span> Zaženi
             <kbd>Ctrl ↵</kbd>
@@ -199,7 +226,11 @@ export default function App({
                   onCodeChange={setCode}
                   onJsonChange={setJson}
                   rootBlockType={rootBlockType}
-                  storageKey={workspaceKey(currentTask)}
+                  storageKey={
+                    currentTask
+                      ? workspaceKey(currentTask)
+                      : `workspace:${levelLabel ?? levelNumber}`
+                  }
                   fallbackStorageKey={
                     taskIndex > 0
                       ? workspaceKey(levelTasks[taskIndex - 1])
@@ -291,15 +322,17 @@ export default function App({
             >
               JavaScript
             </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "tasks"}
-              className={tab === "tasks" ? "on" : ""}
-              onClick={() => setTab("tasks")}
-            >
-              Naloge{currentCompleted && " ✓"}
-            </button>
+            {levelTasks.length > 0 && (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === "tasks"}
+                className={tab === "tasks" ? "on" : ""}
+                onClick={() => setTab("tasks")}
+              >
+                Naloge{currentCompleted && " ✓"}
+              </button>
+            )}
           </div>
 
           <div className="panel">
@@ -388,6 +421,11 @@ export default function App({
           </footer>
         </aside>
       </main>
+      {reward && (
+        <div className="reward-toast" key={reward.id} role="status">
+          +{reward.coins} 🪙
+        </div>
+      )}
       {completionPopupOpen && (
         <div className="completion-modal-backdrop" role="presentation">
           <section

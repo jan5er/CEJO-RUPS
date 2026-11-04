@@ -104,16 +104,12 @@ describe("within", () => {
   });
 
   test("ločena sosednja vsebnika ne uspeta", () => {
-    const root = output(
-      "<div><h1>1-naslov</h1></div><div><p>1-opis</p></div>",
-    );
+    const root = output("<div><h1>1-naslov</h1></div><div><p>1-opis</p></div>");
     expect(passesChecks(root, sameDiv)).toBe(false);
   });
 
   test("gnezdenje znotraj vsebnika je poljubno", () => {
-    const root = output(
-      "<div><div><h1>1-naslov</h1></div><p>1-opis</p></div>",
-    );
+    const root = output("<div><div><h1>1-naslov</h1></div><p>1-opis</p></div>");
     expect(passesChecks(root, sameDiv)).toBe(true);
   });
 
