@@ -231,10 +231,54 @@ kbd {
 /* Glavna postavitev */
 .main {
   display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 12px;
+  grid-template-columns:
+    minmax(0, 1fr) 12px
+    min(var(--side-width, 380px), max(260px, calc(100% - 352px)));
   padding: 12px;
   min-height: 0;
+}
+
+.main.side-collapsed {
+  grid-template-columns: minmax(0, 1fr) 12px 44px;
+}
+
+.side-resizer {
+  position: relative;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.side-resizer::after {
+  content: "";
+  position: absolute;
+  inset: 30% 5px;
+  border-radius: 2px;
+  background: var(--bd);
+  transition: background 0.15s;
+}
+
+.side-resizer:hover::after,
+.side-resizer:focus-visible::after,
+.side-split:hover::after,
+.side-split:focus-visible::after {
+  background: var(--ac);
+}
+
+.side-resizer:focus-visible,
+.side-split:focus-visible {
+  outline: none;
+}
+
+.main.side-collapsed .side-resizer {
+  cursor: default;
+}
+
+.main.side-collapsed .side-resizer::after {
+  display: none;
+}
+
+body.resizing {
+  user-select: none;
 }
 
 .stage {
@@ -310,19 +354,6 @@ kbd {
 
 .tasks-panel {
   width: 100%;
-}
-
-.tasks-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 0 2px 4px;
-}
-
-.tasks-panel-head h2 {
-  margin: 0;
-  font-size: 15px;
 }
 
 .task-item {
@@ -578,24 +609,106 @@ kbd {
   overflow: hidden;
 }
 
-.tabs {
+.side.collapsed > :not(.side-expand) {
+  display: none;
+}
+
+.side-expand {
+  display: none;
+}
+
+.side.collapsed > .side-expand {
+  display: block;
+  flex: 1;
+}
+
+.side-toggle {
+  flex: none;
+  width: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--mut);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.side-toggle:hover {
+  color: var(--tx);
+}
+
+.side-pane {
   display: flex;
+  flex-direction: column;
+  min-height: 80px;
+}
+
+.side-top {
+  flex: 1 1 0;
+}
+
+/* Ko je pod njim Prikaz, ima zgornji del velikost iz flex-basis (nastavljeno v App.jsx) */
+.side-top.has-split {
+  flex: 0 0 auto;
+}
+
+.side-bottom {
+  flex: 1 1 0;
+}
+
+/* Ročaj med nalogo in prikazom */
+.side-split {
+  position: relative;
+  flex: none;
+  height: 10px;
+  margin: -5px 0;
+  z-index: 1;
+  cursor: row-resize;
+  touch-action: none;
+}
+
+.side-split::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 4px;
+  height: 2px;
+  background: var(--bd);
+  transition: background 0.15s;
+}
+
+.pane-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 6px 0 14px;
   border-bottom: 1px solid var(--bd);
 }
 
-.tabs button {
-  flex: 1;
-  padding: 12px;
-  background: transparent;
-  border: 0;
-  border-bottom: 3px solid transparent;
-  color: var(--mut);
-  font-weight: 600;
+.pane-head h2 {
+  margin: 0;
+  font-size: 15px;
 }
 
-.tabs button.on {
-  color: var(--tx);
-  border-bottom-color: var(--ac);
+.pane-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.pane-head .side-toggle {
+  width: 32px;
+  height: 32px;
+}
+
+/* Preklop Prikaz/HTML v glavi izpisa je enak kot pri pričakovanem izpisu, le večji */
+.pane-head .expected-output-tabs {
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .panel {
@@ -635,25 +748,12 @@ kbd {
 .preview-output {
   align-self: stretch;
   flex: 1;
-  min-height: 180px;
+  min-height: 0;
   overflow: auto;
   padding: 14px;
   background: var(--surface-2);
   border: 1px solid var(--bd);
   border-radius: 10px;
-}
-
-.preview-panel {
-  display: none;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.preview-panel.active {
-  display: flex;
 }
 
 .stats {
@@ -687,14 +787,25 @@ kbd {
 }
 
 @media (max-width: 900px) {
-  .main {
+  .main,
+  .main.side-collapsed {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(420px, 1fr) auto;
+    gap: 12px;
     overflow: auto;
   }
 
+  /* Na ozkem zaslonu je plošča pod platnom, zato širine ni smiselno spreminjati */
+  .side-resizer {
+    display: none;
+  }
+
   .side {
-    min-height: 320px;
+    min-height: 520px;
+  }
+
+  .side.collapsed {
+    min-height: 44px;
   }
 
   .workspace-grid {

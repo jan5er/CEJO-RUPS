@@ -2,7 +2,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { passesChecks } from "./checks";
 import { BlockEditor } from "./components/BlockEditor";
-import { ExpectedOutput } from "./components/ExpectedOutput";
+import { ExpectedOutput, ViewTabs } from "./components/ExpectedOutput";
+import {
+  clamp,
+  dragPointer,
+  SIDE_MIN_WIDTH,
+  SPLIT_MAX,
+  SPLIT_MIN,
+  STAGE_MIN_WIDTH,
+  useSideLayout,
+} from "./components/sideLayout";
+import { formatHtml } from "./formatHtml";
 import { run } from "./interpreter";
 import CoinBadge from "./shop/CoinBadge";
 import { awardTask } from "./shop/progress";
@@ -87,14 +97,53 @@ export default function App({
   const [json, setJson] = useState(null);
   const [result, setResult] = useState(null);
   const [consoleOpen, setConsoleOpen] = useState(false);
-  const [tab, setTab] = useState("js");
-  const [copied, setCopied] = useState(false);
+  const [outputView, setOutputView] = useState("page");
+  const [outputHtml, setOutputHtml] = useState("");
   const [taskIndex, setTaskIndex] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(() => new Set());
   const [completionPopupOpen, setCompletionPopupOpen] = useState(false);
   const [finalScreenOpen, setFinalScreenOpen] = useState(false);
   const [reward, setReward] = useState(null);
   const previewRef = useRef(null);
+  const mainRef = useRef(null);
+  const sideRef = useRef(null);
+  const [layout, updateLayout] = useSideLayout();
+
+  const maxSideWidth = () =>
+    (mainRef.current?.clientWidth ?? Number.POSITIVE_INFINITY)
+    - STAGE_MIN_WIDTH;
+  const setSideWidth = (width) =>
+    updateLayout({
+      width: Math.round(
+        clamp(width, SIDE_MIN_WIDTH, Math.max(SIDE_MIN_WIDTH, maxSideWidth())),
+      ),
+    });
+  const setSplit = (split) =>
+    updateLayout({ split: clamp(split, SPLIT_MIN, SPLIT_MAX) });
+
+  const startWidthDrag = (event) =>
+    dragPointer(event, (e) => {
+      const main = mainRef.current.getBoundingClientRect();
+      setSideWidth(main.right - 12 - e.clientX - 6);
+    });
+  const startSplitDrag = (event) =>
+    dragPointer(event, (e) => {
+      const side = sideRef.current.getBoundingClientRect();
+      setSplit((e.clientY - side.top) / side.height);
+    });
+
+  const onWidthKey = (event) => {
+    const step = { ArrowLeft: 20, ArrowRight: -20 }[event.key];
+    if (!step) return;
+    event.preventDefault();
+    setSideWidth(layout.width + step);
+  };
+  const onSplitKey = (event) => {
+    const step = { ArrowUp: -0.05, ArrowDown: 0.05 }[event.key];
+    if (!step) return;
+    event.preventDefault();
+    setSplit(layout.split + step);
+  };
 
   const blockCount = countBlocks(json);
   // Sandbox nima nalog, zato je currentTask lahko undefined
@@ -103,11 +152,13 @@ export default function App({
     currentTask && completedTasks.has(currentTask.id),
   );
   const isLastTask = taskIndex === levelTasks.length - 1;
+  const hasTasks = levelTasks.length > 0;
 
   const handleRun = useCallback(() => {
     previewRef.current?.replaceChildren();
     const execution = run(code);
     setResult({ ...execution, at: time() });
+    setOutputHtml(formatHtml(previewRef.current));
     if (!execution.error && currentTask) {
       const taskOutput = showPreview
         ? readPreviewOutput(previewRef.current)
@@ -124,7 +175,6 @@ export default function App({
         if (gained > 0) setReward({ coins: gained, id: Date.now() });
       }
     }
-    if (showPreview) setTab("preview");
     setConsoleOpen(Boolean(execution.error));
     console.log("Run at", time(), "code:", code);
   }, [code, json, currentTask, levelNumber, showPreview]);
@@ -136,6 +186,7 @@ export default function App({
     }
     setTaskIndex((index) => index + 1);
     setResult(null);
+    setOutputHtml("");
     previewRef.current?.replaceChildren();
   };
 
@@ -158,15 +209,19 @@ export default function App({
     return () => window.removeEventListener("keydown", onKey);
   }, [handleRun]);
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {}
-  };
-
   const failed = Boolean(result?.error);
+
+  const collapseButton = (
+    <button
+      type="button"
+      className="side-toggle"
+      onClick={() => updateLayout({ collapsed: true })}
+      aria-label="Skrči stransko ploščo"
+      title="Skrči stransko ploščo"
+    >
+      ›
+    </button>
+  );
 
   const handleContinue = () => {
     setCompletionPopupOpen(false);
@@ -209,7 +264,11 @@ export default function App({
         </div>
       </header>
 
-      <main className="main">
+      <main
+        ref={mainRef}
+        className={`main${layout.collapsed ? " side-collapsed" : ""}`}
+        style={{ "--side-width": `${layout.width}px` }}
+      >
         <section className="stage" aria-label="Bloki in naloge">
           <div className="workspace-grid">
             <section
@@ -300,114 +359,140 @@ export default function App({
           </div>
         </section>
 
-        <aside className="side">
-          <div className="tabs" role="tablist">
-            {showPreview && (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === "preview"}
-                className={tab === "preview" ? "on" : ""}
-                onClick={() => setTab("preview")}
-              >
-                Prikaz
-              </button>
-            )}
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "js"}
-              className={tab === "js" ? "on" : ""}
-              onClick={() => setTab("js")}
-            >
-              JavaScript
-            </button>
-            {levelTasks.length > 0 && (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === "tasks"}
-                className={tab === "tasks" ? "on" : ""}
-                onClick={() => setTab("tasks")}
-              >
-                Naloge{currentCompleted && " ✓"}
-              </button>
-            )}
-          </div>
+        {/* biome-ignore lint/a11y/useSemanticElements: <hr> can't be a focusable drag handle */}
+        <div
+          className="side-resizer"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Širina stranske plošče"
+          aria-valuenow={layout.width}
+          tabIndex={layout.collapsed ? -1 : 0}
+          onPointerDown={layout.collapsed ? undefined : startWidthDrag}
+          onKeyDown={layout.collapsed ? undefined : onWidthKey}
+        />
 
-          <div className="panel">
-            {showPreview && (
-              <div
-                className={`preview-panel${tab === "preview" ? " active" : ""}`}
-                aria-hidden={tab !== "preview"}
-              >
-                <p className="hint">Prikaz zgrajene spletne strani.</p>
-                <div id="output" ref={previewRef} className="preview-output" />
+        <aside
+          ref={sideRef}
+          className={`side${layout.collapsed ? " collapsed" : ""}`}
+        >
+          <button
+            type="button"
+            className="side-toggle side-expand"
+            onClick={() => updateLayout({ collapsed: false })}
+            aria-label="Razširi stransko ploščo"
+            title="Razširi stransko ploščo"
+          >
+            ‹
+          </button>
+
+          {hasTasks && (
+            <section
+              className={`side-pane side-top${showPreview ? " has-split" : ""}`}
+              style={
+                showPreview
+                  ? { flexBasis: `${layout.split * 100}%` }
+                  : undefined
+              }
+              aria-labelledby="tasks-heading"
+            >
+              <div className="pane-head">
+                <h2 id="tasks-heading">Naloge</h2>
+                <span className="task-progress">
+                  {taskIndex + 1}/{levelTasks.length}
+                </span>
+                <div className="pane-head-actions">{collapseButton}</div>
               </div>
-            )}
-            {tab === "js" ? (
-              <>
-                <p className="hint">
-                  Tako bi bili tvoji bloki videti kot prava koda!
-                </p>
-                <pre className="code">
-                  {code.trim() || "// Povleci bloke v delovni prostor …"}
-                </pre>
-                <button
-                  type="button"
-                  className="btn small"
-                  onClick={copy}
-                  disabled={!code.trim()}
-                >
-                  {copied ? "Kopirano ✓" : "Kopiraj kodo"}
-                </button>
-              </>
-            ) : tab === "tasks" ? (
-              <div className="tasks-panel">
-                <div className="tasks-panel-head">
-                  <h2>Naloge</h2>
-                  <span className="task-progress">
-                    {taskIndex + 1}/{levelTasks.length}
-                  </span>
-                </div>
-                <div className="task-list">
-                  <article
-                    className={`task-item${currentCompleted ? " completed" : ""}`}
-                    key={currentTask.id}
-                  >
-                    <div className="task-heading">
-                      <h3>{currentTask.title}</h3>
-                      {currentCompleted && (
-                        <span className="task-status">✓ Opravljeno</span>
+
+              <div className="panel">
+                <div className="tasks-panel">
+                  <div className="task-list">
+                    <article
+                      className={`task-item${currentCompleted ? " completed" : ""}`}
+                      key={currentTask.id}
+                    >
+                      <div className="task-heading">
+                        <h3>{currentTask.title}</h3>
+                        {currentCompleted && (
+                          <span className="task-status">✓ Opravljeno</span>
+                        )}
+                      </div>
+                      <p>{currentTask.description}</p>
+                      {currentTask.theory && (
+                        <div className="task-theory">
+                          <strong>Teorija:</strong> {currentTask.theory}
+                        </div>
                       )}
-                    </div>
-                    <p>{currentTask.description}</p>
-                    {currentTask.theory && (
-                      <div className="task-theory">
-                        <strong>Teorija:</strong> {currentTask.theory}
-                      </div>
-                    )}
-                    {currentTask.requiredBlocks?.length > 0 && (
-                      <div className="task-requirements">
-                        <strong>Obvezni bloki:</strong>{" "}
-                        {currentTask.requiredBlocks.map(blockName).join(", ")}
-                      </div>
-                    )}
-                    <ExpectedOutput html={currentTask.expectedHtml} />
-                    {currentCompleted && (
-                      <button
-                        type="button"
-                        className="btn primary small task-next"
-                        onClick={handleNextTask}
-                      >
-                        {isLastTask ? "Zaključi level" : "Naslednja naloga →"}
-                      </button>
-                    )}
-                  </article>
+                      {currentTask.requiredBlocks?.length > 0 && (
+                        <div className="task-requirements">
+                          <strong>Obvezni bloki:</strong>{" "}
+                          {currentTask.requiredBlocks.map(blockName).join(", ")}
+                        </div>
+                      )}
+                      <ExpectedOutput
+                        html={currentTask.expectedHtml}
+                        view={outputView}
+                        onViewChange={setOutputView}
+                      />
+                      {currentCompleted && (
+                        <button
+                          type="button"
+                          className="btn primary small task-next"
+                          onClick={handleNextTask}
+                        >
+                          {isLastTask ? "Zaključi level" : "Naslednja naloga →"}
+                        </button>
+                      )}
+                    </article>
+                  </div>
                 </div>
               </div>
-            ) : null}
-          </div>
+            </section>
+          )}
+
+          {showPreview && (
+            <>
+              {hasTasks && (
+                <>
+                  {/* biome-ignore lint/a11y/useSemanticElements: <hr> can't be a focusable drag handle */}
+                  <div
+                    className="side-split"
+                    role="separator"
+                    aria-orientation="horizontal"
+                    aria-label="Razmerje med nalogo in izpisom"
+                    aria-valuenow={Math.round(layout.split * 100)}
+                    tabIndex={0}
+                    onPointerDown={startSplitDrag}
+                    onKeyDown={onSplitKey}
+                  />
+                </>
+              )}
+              <section
+                className="side-pane side-bottom"
+                aria-labelledby="output-heading"
+              >
+                <div className="pane-head">
+                  <h2 id="output-heading">Tvoj izpis</h2>
+                  <div className="pane-head-actions">
+                    <ViewTabs view={outputView} onChange={setOutputView} />
+                    {!hasTasks && collapseButton}
+                  </div>
+                </div>
+                <div className="panel">
+                  <div
+                    id="output"
+                    ref={previewRef}
+                    className="preview-output"
+                    hidden={outputView !== "page"}
+                  />
+                  {outputView === "html" && (
+                    <pre className="code">
+                      {outputHtml || "<!-- Pritisni »Zaženi« -->"}
+                    </pre>
+                  )}
+                </div>
+              </section>
+            </>
+          )}
 
           <footer className="stats">
             <div>
