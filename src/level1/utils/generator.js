@@ -5,10 +5,12 @@ import { checkboxLevel1JSON, initGenCombobox } from "../blocks/Checkbox";
 import { containerLevel1JSON, initGenContainer } from "../blocks/Container";
 import { headingLevel1JSON, initGenHeading } from "../blocks/Heading";
 import { initGenInput, inputLevel1JSON } from "../blocks/Input";
+import { initGenPage, pageLevel1JSON } from "../blocks/Page";
 import { initGenSelect, selectLevel1JSON } from "../blocks/Select";
 import { initGenSimpleText, simpleTextLevel1JSON } from "../blocks/SimpleText";
 
 export const blocksLevel1 = Blockly.common.createBlockDefinitionsFromJsonArray([
+  pageLevel1JSON,
   headingLevel1JSON,
   inputLevel1JSON,
   simpleTextLevel1JSON,
@@ -22,6 +24,7 @@ export const blocksLevel1 = Blockly.common.createBlockDefinitionsFromJsonArray([
 export const forBlockLevel1 = Object.create(null);
 
 //Set generators for blocks
+initGenPage();
 initGenHeading();
 initGenInput();
 initGenSimpleText();

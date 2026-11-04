@@ -14,6 +14,32 @@ Blockly.setLocale(Sl); // Nastavimo jezik blokov/teksta na slovenščino
 Blockly.Msg.MATH_CHANGE_TITLE = "povečaj %1 za %2"; // Slovenščina to prevede v "spremni" kar je neumno in neintuitivno
 Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2";
 
+const ORPHANED = "ORPHANED_BLOCK";
+
+/**
+ * @param {Blockly.WorkspaceSvg} ws
+ * @param {string} type
+ */
+function setupRootBlock(ws, type) {
+  Blockly.Events.disable();
+  try {
+    const root =
+      ws.getBlocksByType(type, false)[0]
+      ?? Blockly.serialization.blocks.append({ type, x: 40, y: 40 }, ws);
+    root.setDeletable(false);
+
+    for (const block of ws.getTopBlocks(false)) {
+      if (!block.outputConnection && !block.previousConnection) continue;
+      for (let b = block; b; b = b.getNextBlock()) {
+        b.setDisabledReason(true, ORPHANED);
+      }
+    }
+  } finally {
+    Blockly.Events.enable();
+  }
+  ws.addChangeListener(Blockly.Events.disableOrphans);
+}
+
 /**
  * @param {object} props
  * @param {object} props.toolbox  Toolbox JSON (definiraj izven komponente!)
@@ -21,6 +47,7 @@ Blockly.Msg.VARIABLES_SET = "nastavi %1 na %2";
  * @param {(json: object) => void} [props.onJsonChange]
  * @param {(code: string) => void} [props.onCodeChange]  Generirana JS (samo prikaz)
  * @param {(ws: Blockly.WorkspaceSvg) => void} [props.onWorkspaceChange]
+ * @param {string} [props.rootBlockType]  Korenski blok (npr. Stran); izvedejo se samo bloki pripeti nanj
  * @param {string} [props.className]
  */
 export function BlockEditor({
@@ -31,6 +58,7 @@ export function BlockEditor({
   onJsonChange,
   onCodeChange,
   onWorkspaceChange,
+  rootBlockType,
   className,
 }) {
   const containerRef = useRef(null);
@@ -47,6 +75,7 @@ export function BlockEditor({
       ...WORKSPACE_OPTIONS,
       theme: themeFor(scheme.matches),
       toolbox,
+      ...(rootBlockType && { maxInstances: { [rootBlockType]: 1 } }),
     });
 
     if (initialRef.current)
@@ -59,6 +88,7 @@ export function BlockEditor({
     };
 
     load(ws); // namesto initialJson
+    if (rootBlockType) setupRootBlock(ws, rootBlockType);
 
     ws.addChangeListener((e) => {
       if (e.isUiEvent) return;
@@ -79,7 +109,7 @@ export function BlockEditor({
       ro.disconnect();
       ws.dispose();
     };
-  }, [blocks, forBlock, toolbox]);
+  }, [blocks, forBlock, toolbox, rootBlockType]);
 
   return <div ref={containerRef} className={className} />;
 }

@@ -1,6 +1,7 @@
 import { Order } from "blockly/javascript";
 import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
+import { parentElement } from "../utils/parent";
 
 //JSON for representing input element for level 1
 export const inputLevel1JSON = namedBlock("Vnosno polje", {
@@ -23,13 +24,11 @@ export const inputLevel1JSON = namedBlock("Vnosno polje", {
 //Generator for input element
 export const initGenInput = () => {
   forBlockLevel1.input_level1 = (block, generator) => {
-    const rootBlock = block.getRootBlock();
     const labelText = generator.valueToCode(block, "LABEL_TEXT", Order.ATOMIC);
 
     const inputGenCode = generator.provideFunction_(
       "inputGenCode",
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerId) {
-                const containerDiv = document.getElementById(containerId) || document.getElementById('output');
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerDiv) {
                 const name = "Input" + Math.floor(Math.random() * 100000);
 
                 const labelEl = document.createElement('label');
@@ -47,7 +46,7 @@ export const initGenInput = () => {
         }`,
     );
     // Generate the function call for this block.
-    const code = `${inputGenCode}(${labelText},"${rootBlock.data}");\n`;
+    const code = `${inputGenCode}(${labelText}, ${parentElement(block)});\n`;
     return code;
   };
 };

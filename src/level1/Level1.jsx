@@ -13,6 +13,7 @@ export default function Level1() {
       generators={forBlockLevel1}
       nextLevel={2}
       showPreview
+      rootBlockType="page_level1"
     />
   );
 }

@@ -1,6 +1,7 @@
 import { Order } from "blockly/javascript";
 import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
+import { parentElement } from "../utils/parent";
 
 //JSON for representing button element for level 1
 export const buttonLevel1JSON = namedBlock("Gumb", {
@@ -23,19 +24,17 @@ export const buttonLevel1JSON = namedBlock("Gumb", {
 //Generator for button element
 export const initGenButton = () => {
   forBlockLevel1.button_level1 = (block, generator) => {
-    const rootBlock = block.getRootBlock();
     const text = generator.valueToCode(block, "TEXT", Order.NONE) || "''";
     const buttonGenCode = generator.provideFunction_(
       "buttonGenCode",
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerId) {
-            const containerDiv = document.getElementById(containerId) || document.getElementById('output');
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text, containerDiv) {
             const buttonEl = document.createElement('button');
             buttonEl.innerText = text;
             if (containerDiv) containerDiv.appendChild(buttonEl);
         }`,
     );
     // Generate the function call for this block.
-    const code = `${buttonGenCode}(${text},"${rootBlock.data}");\n`;
+    const code = `${buttonGenCode}(${text}, ${parentElement(block)});\n`;
     return code;
   };
 };

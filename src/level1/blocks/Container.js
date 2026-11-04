@@ -1,5 +1,6 @@
 import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
+import { containerVariable, parentElement } from "../utils/parent";
 
 //JSON for representing container element for level 1
 export const containerLevel1JSON = namedBlock("Vsebnik", {
@@ -13,14 +14,14 @@ export const containerLevel1JSON = namedBlock("Vsebnik", {
       name: "SUB_ELEMENTS",
     },
   ],
+  previousStatement: null,
+  nextStatement: null,
   colour: "#da7d12",
 });
 
 //Generator for container element
 export const initGenContainer = () => {
   forBlockLevel1.container_level1 = (block, generator) => {
-    const containerId = `Container${Math.floor(Math.random() * 100000)}`;
-    block.data = containerId;
     const statement_sub_elements = generator.statementToCode(
       block,
       "SUB_ELEMENTS",
@@ -28,22 +29,18 @@ export const initGenContainer = () => {
 
     const containerGenCode = generator.provideFunction_(
       "containerGenCode",
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(containerId) {
-                const outputDiv = document.getElementById('output');
-
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(parent) {
                 const divEl = document.createElement('div');
-                divEl.id = containerId;
                 divEl.style.width = "fit-content";
                 divEl.style.marginLeft = "auto";
                 divEl.style.marginRight = "auto";
-                outputDiv.appendChild(divEl);
-
-                ${statement_sub_elements}
+                if (parent) parent.appendChild(divEl);
+                return divEl;
         }`,
     );
 
-    // Generate the function call for this block.
-    const code = `${containerGenCode}("${containerId}");\n`;
+    // Create the div, then generate the children inside a scope where it's available to them.
+    const code = `{\n  const ${containerVariable(block)} = ${containerGenCode}(${parentElement(block)});\n${statement_sub_elements}}\n`;
     return code;
   };
 };

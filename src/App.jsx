@@ -80,6 +80,7 @@ export default function App({
   nextLevel,
   completionMessage,
   showPreview = false,
+  rootBlockType,
 }) {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
@@ -197,6 +198,7 @@ export default function App({
                   forBlock={generators}
                   onCodeChange={setCode}
                   onJsonChange={setJson}
+                  rootBlockType={rootBlockType}
                 />
 
                 {blockCount === 0 && (

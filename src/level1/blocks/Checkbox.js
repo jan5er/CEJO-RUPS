@@ -1,6 +1,7 @@
 import { Order } from "blockly/javascript";
 import { namedBlock } from "../../blockNames";
 import { forBlockLevel1 } from "../utils/generator";
+import { parentElement } from "../utils/parent";
 
 //JSON for representing checkbox element for level 1
 export const checkboxLevel1JSON = namedBlock("Potrditveno polje", {
@@ -23,13 +24,11 @@ export const checkboxLevel1JSON = namedBlock("Potrditveno polje", {
 //Generator for checkbox element
 export const initGenCombobox = () => {
   forBlockLevel1.checkbox_level1 = (block, generator) => {
-    const rootBlock = block.getRootBlock();
     const labelText = generator.valueToCode(block, "LABEL_TEXT", Order.ATOMIC);
 
     const checkboxGenCode = generator.provideFunction_(
       "checkboxGenCode",
-      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerId) {
-                const containerDiv = document.getElementById(containerId) || document.getElementById('output');
+      `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(labelText, containerDiv) {
                 const name = "NamedCheckbox" + Math.floor(Math.random() * 100000);
 
                 const labelEl = document.createElement('label');
@@ -45,7 +44,7 @@ export const initGenCombobox = () => {
         }`,
     );
     // Generate the function call for this block.
-    const code = `${checkboxGenCode}(${labelText},"${rootBlock.data}");\n`;
+    const code = `${checkboxGenCode}(${labelText}, ${parentElement(block)});\n`;
     return code;
   };
 };
